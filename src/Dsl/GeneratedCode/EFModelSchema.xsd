@@ -395,6 +395,12 @@
             <xsd:documentation>If true, will allow generating [Comment] attributes on C# class</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
+        <!-- Property: CreateConstructors -->
+        <xsd:attribute name="createConstructors" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>Whether constructors for required properties will be created automatically or not</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -682,6 +688,12 @@
         <xsd:attribute name="persistent" type="xsd:boolean" >
           <xsd:annotation>
             <xsd:documentation>Class will be stored in persistent storage</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <!-- Property: CreateConstructors -->
+        <xsd:attribute name="createConstructors" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>Whether the constructors for required properties will be created automatically or not</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
       </xsd:extension>

@@ -1021,6 +1021,23 @@ namespace Sawczyn.EFDesigner.EFModel
 	            }
 	         }
 	      }
+	      // CreateConstructors
+	      if (!serializationContext.Result.Failed)
+	      {
+	         string attribCreateConstructors = EFModelSerializationHelper.Instance.ReadAttribute(serializationContext, element, reader, "createConstructors");
+	         if (attribCreateConstructors != null)
+	         {
+	            global::System.Boolean valueOfCreateConstructors;
+	            if (DslModeling::SerializationUtilities.TryGetValue<global::System.Boolean>(serializationContext, attribCreateConstructors, out valueOfCreateConstructors))
+	            {
+	               instanceOfModelRoot.CreateConstructors = valueOfCreateConstructors;
+	            }
+	            else
+	            {   // Invalid property value, ignored.
+	               EFModelSerializationBehaviorSerializationMessages.IgnoredPropertyValue(serializationContext, reader, "createConstructors", typeof(global::System.Boolean), attribCreateConstructors);
+	            }
+	         }
+	      }
 	   }
 	
 	   /// <summary>
@@ -2326,6 +2343,19 @@ namespace Sawczyn.EFDesigner.EFModel
 	            }
 	         }
 	      }
+	      // CreateConstructors
+	      if (!serializationContext.Result.Failed)
+	      {
+	         global::System.Boolean propValue = instanceOfModelRoot.CreateConstructors;
+	         string serializedPropValue = DslModeling::SerializationUtilities.GetString<global::System.Boolean>(serializationContext, propValue);
+	         if (!serializationContext.Result.Failed)
+	         {
+	            if (serializationContext.WriteOptionalPropertiesWithDefaultValue || string.CompareOrdinal(serializedPropValue, "true") != 0)
+	            {   // No need to write the value out if it's the same as default value.
+	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "createConstructors", serializedPropValue);
+	            }
+	         }
+	      }
 	   }
 	
 	   /// <summary>
@@ -3180,6 +3210,23 @@ namespace Sawczyn.EFDesigner.EFModel
 	            else
 	            {   // Invalid property value, ignored.
 	               EFModelSerializationBehaviorSerializationMessages.IgnoredPropertyValue(serializationContext, reader, "persistent", typeof(global::System.Boolean), attribPersistent);
+	            }
+	         }
+	      }
+	      // CreateConstructors
+	      if (!serializationContext.Result.Failed)
+	      {
+	         string attribCreateConstructors = EFModelSerializationHelper.Instance.ReadAttribute(serializationContext, element, reader, "createConstructors");
+	         if (attribCreateConstructors != null)
+	         {
+	            global::System.Boolean valueOfCreateConstructors;
+	            if (DslModeling::SerializationUtilities.TryGetValue<global::System.Boolean>(serializationContext, attribCreateConstructors, out valueOfCreateConstructors))
+	            {
+	               instanceOfModelClass.CreateConstructors = valueOfCreateConstructors;
+	            }
+	            else
+	            {   // Invalid property value, ignored.
+	               EFModelSerializationBehaviorSerializationMessages.IgnoredPropertyValue(serializationContext, reader, "createConstructors", typeof(global::System.Boolean), attribCreateConstructors);
 	            }
 	         }
 	      }
@@ -4251,6 +4298,19 @@ namespace Sawczyn.EFDesigner.EFModel
 	            if (serializationContext.WriteOptionalPropertiesWithDefaultValue || string.CompareOrdinal(serializedPropValue, "true") != 0)
 	            {   // No need to write the value out if it's the same as default value.
 	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "persistent", serializedPropValue);
+	            }
+	         }
+	      }
+	      // CreateConstructors
+	      if (!serializationContext.Result.Failed)
+	      {
+	         global::System.Boolean propValue = instanceOfModelClass.CreateConstructors;
+	         string serializedPropValue = DslModeling::SerializationUtilities.GetString<global::System.Boolean>(serializationContext, propValue);
+	         if (!serializationContext.Result.Failed)
+	         {
+	            if (serializationContext.WriteOptionalPropertiesWithDefaultValue || string.CompareOrdinal(serializedPropValue, "true") != 0)
+	            {   // No need to write the value out if it's the same as default value.
+	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "createConstructors", serializedPropValue);
 	            }
 	         }
 	      }

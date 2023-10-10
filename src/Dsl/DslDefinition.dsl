@@ -370,6 +370,11 @@
             <ExternalTypeMoniker Name="/System/Boolean" />
           </Type>
         </DomainProperty>
+        <DomainProperty Id="d87a40df-5c85-4f5e-986b-ed3e8c92c44f" Description="Whether constructors for required properties will be created automatically or not" Name="CreateConstructors" DisplayName="Create Constructors" DefaultValue="true" Category="Code Generation">
+          <Type>
+            <ExternalTypeMoniker Name="/System/Boolean" />
+          </Type>
+        </DomainProperty>
       </Properties>
       <ElementMergeDirectives>
         <ElementMergeDirective>
@@ -634,6 +639,11 @@
         <DomainProperty Id="b8e3a0de-3d75-4bf9-8579-509e9df5940a" Description="Tooltip text shown in the model explorer" Name="ExplorerTooltip" DisplayName="Explorer Tooltip" Kind="Calculated" GetterAccessModifier="Assembly" SetterAccessModifier="Assembly" IsBrowsable="false" IsUIReadOnly="true">
           <Type>
             <ExternalTypeMoniker Name="/System/String" />
+          </Type>
+        </DomainProperty>
+        <DomainProperty Id="5db141fc-0ecc-4c90-9cf6-4d3ab2d05626" Description="Whether the constructors for required properties will be created automatically or not" Name="CreateConstructors" DisplayName="Create Constructors" DefaultValue="true" Category="Code Generation">
+          <Type>
+            <ExternalTypeMoniker Name="/System/Boolean" />
           </Type>
         </DomainProperty>
       </Properties>
@@ -2442,6 +2452,9 @@
           <XmlPropertyData XmlName="generateTableComments">
             <DomainPropertyMoniker Name="ModelRoot/GenerateTableComments" />
           </XmlPropertyData>
+          <XmlPropertyData XmlName="createConstructors">
+            <DomainPropertyMoniker Name="ModelRoot/CreateConstructors" />
+          </XmlPropertyData>
         </ElementData>
       </XmlClassData>
       <XmlClassData TypeName="ModelClass" MonikerAttributeName="" SerializeId="true" MonikerElementName="modelClassMoniker" ElementName="modelClass" MonikerTypeName="ModelClassMoniker">
@@ -2569,6 +2582,9 @@
           </XmlPropertyData>
           <XmlPropertyData XmlName="explorerTooltip" Representation="Ignore">
             <DomainPropertyMoniker Name="ModelClass/ExplorerTooltip" />
+          </XmlPropertyData>
+          <XmlPropertyData XmlName="createConstructors">
+            <DomainPropertyMoniker Name="ModelClass/CreateConstructors" />
           </XmlPropertyData>
         </ElementData>
       </XmlClassData>

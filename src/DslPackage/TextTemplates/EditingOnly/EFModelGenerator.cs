@@ -898,7 +898,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             // Constructor with required parameters (if necessary)
             /***********************************************************************/
 
-            if (hasRequiredParameters || hasRequiredNavigationProperties)
+            if (modelClass.CreateConstructors && (hasRequiredParameters || hasRequiredNavigationProperties))
             {
                WriteConstructorsWithRequiredProperties(modelClass, remarks, requiredNavigationProperties);
 

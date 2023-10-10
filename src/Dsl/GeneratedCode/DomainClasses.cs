@@ -4784,6 +4784,96 @@ namespace Sawczyn.EFDesigner.EFModel
 		}
 		
 		#endregion
+		#region CreateConstructors domain property code
+		
+		/// <summary>
+		/// CreateConstructors domain property Id.
+		/// </summary>
+		public static readonly global::System.Guid CreateConstructorsDomainPropertyId = new global::System.Guid(0xd87a40df, 0x5c85, 0x4f5e, 0x98, 0x6b, 0xed, 0x3e, 0x8c, 0x92, 0xc4, 0x4f);
+		
+		/// <summary>
+		/// Storage for CreateConstructors
+		/// </summary>
+		private global::System.Boolean createConstructorsPropertyStorage = true;
+		
+		/// <summary>
+		/// Gets or sets the value of CreateConstructors domain property.
+		/// Whether constructors for required properties will be created automatically or
+		/// not
+		/// </summary>
+		[DslDesign::DisplayNameResource("Sawczyn.EFDesigner.EFModel.ModelRoot/CreateConstructors.DisplayName", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::CategoryResource("Sawczyn.EFDesigner.EFModel.ModelRoot/CreateConstructors.Category", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::DescriptionResource("Sawczyn.EFDesigner.EFModel.ModelRoot/CreateConstructors.Description", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[global::System.ComponentModel.DefaultValue(true)]
+		[DslModeling::DomainObjectId("d87a40df-5c85-4f5e-986b-ed3e8c92c44f")]
+		public global::System.Boolean CreateConstructors
+		{
+			[global::System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return createConstructorsPropertyStorage;
+			}
+			[global::System.Diagnostics.DebuggerStepThrough]
+			set
+			{
+				CreateConstructorsPropertyHandler.Instance.SetValue(this, value);
+			}
+		}
+		/// <summary>
+		/// Value handler for the ModelRoot.CreateConstructors domain property.
+		/// </summary>
+		internal sealed partial class CreateConstructorsPropertyHandler : DslModeling::DomainPropertyValueHandler<ModelRoot, global::System.Boolean>
+		{
+			private CreateConstructorsPropertyHandler() { }
+		
+			/// <summary>
+			/// Gets the singleton instance of the ModelRoot.CreateConstructors domain property value handler.
+			/// </summary>
+			public static readonly CreateConstructorsPropertyHandler Instance = new CreateConstructorsPropertyHandler();
+		
+			/// <summary>
+			/// Gets the Id of the ModelRoot.CreateConstructors domain property.
+			/// </summary>
+			public sealed override global::System.Guid DomainPropertyId
+			{
+				[global::System.Diagnostics.DebuggerStepThrough]
+				get
+				{
+					return CreateConstructorsDomainPropertyId;
+				}
+			}
+			
+			/// <summary>
+			/// Gets a strongly-typed value of the property on specified element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <returns>Property value.</returns>
+			public override sealed global::System.Boolean GetValue(ModelRoot element)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+				return element.createConstructorsPropertyStorage;
+			}
+		
+			/// <summary>
+			/// Sets property value on an element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <param name="newValue">New property value.</param>
+			public override sealed void SetValue(ModelRoot element, global::System.Boolean newValue)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+		
+				global::System.Boolean oldValue = GetValue(element);
+				if (newValue != oldValue)
+				{
+					ValueChanging(element, oldValue, newValue);
+					element.createConstructorsPropertyStorage = newValue;
+					ValueChanged(element, oldValue, newValue);
+				}
+			}
+		}
+		
+		#endregion
 		#region Comments opposite domain role accessor
 		
 		/// <summary>
@@ -8215,6 +8305,96 @@ namespace Sawczyn.EFDesigner.EFModel
 				return element.GetExplorerTooltipValue();
 			}
 		
+		}
+		
+		#endregion
+		#region CreateConstructors domain property code
+		
+		/// <summary>
+		/// CreateConstructors domain property Id.
+		/// </summary>
+		public static readonly global::System.Guid CreateConstructorsDomainPropertyId = new global::System.Guid(0x5db141fc, 0x0ecc, 0x4c90, 0x9c, 0xf6, 0x4d, 0x3a, 0xb2, 0xd0, 0x56, 0x26);
+		
+		/// <summary>
+		/// Storage for CreateConstructors
+		/// </summary>
+		private global::System.Boolean createConstructorsPropertyStorage = true;
+		
+		/// <summary>
+		/// Gets or sets the value of CreateConstructors domain property.
+		/// Whether the constructors for required properties will be created automatically
+		/// or not
+		/// </summary>
+		[DslDesign::DisplayNameResource("Sawczyn.EFDesigner.EFModel.ModelClass/CreateConstructors.DisplayName", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::CategoryResource("Sawczyn.EFDesigner.EFModel.ModelClass/CreateConstructors.Category", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::DescriptionResource("Sawczyn.EFDesigner.EFModel.ModelClass/CreateConstructors.Description", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[global::System.ComponentModel.DefaultValue(true)]
+		[DslModeling::DomainObjectId("5db141fc-0ecc-4c90-9cf6-4d3ab2d05626")]
+		public global::System.Boolean CreateConstructors
+		{
+			[global::System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return createConstructorsPropertyStorage;
+			}
+			[global::System.Diagnostics.DebuggerStepThrough]
+			set
+			{
+				CreateConstructorsPropertyHandler.Instance.SetValue(this, value);
+			}
+		}
+		/// <summary>
+		/// Value handler for the ModelClass.CreateConstructors domain property.
+		/// </summary>
+		internal sealed partial class CreateConstructorsPropertyHandler : DslModeling::DomainPropertyValueHandler<ModelClass, global::System.Boolean>
+		{
+			private CreateConstructorsPropertyHandler() { }
+		
+			/// <summary>
+			/// Gets the singleton instance of the ModelClass.CreateConstructors domain property value handler.
+			/// </summary>
+			public static readonly CreateConstructorsPropertyHandler Instance = new CreateConstructorsPropertyHandler();
+		
+			/// <summary>
+			/// Gets the Id of the ModelClass.CreateConstructors domain property.
+			/// </summary>
+			public sealed override global::System.Guid DomainPropertyId
+			{
+				[global::System.Diagnostics.DebuggerStepThrough]
+				get
+				{
+					return CreateConstructorsDomainPropertyId;
+				}
+			}
+			
+			/// <summary>
+			/// Gets a strongly-typed value of the property on specified element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <returns>Property value.</returns>
+			public override sealed global::System.Boolean GetValue(ModelClass element)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+				return element.createConstructorsPropertyStorage;
+			}
+		
+			/// <summary>
+			/// Sets property value on an element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <param name="newValue">New property value.</param>
+			public override sealed void SetValue(ModelClass element, global::System.Boolean newValue)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+		
+				global::System.Boolean oldValue = GetValue(element);
+				if (newValue != oldValue)
+				{
+					ValueChanging(element, oldValue, newValue);
+					element.createConstructorsPropertyStorage = newValue;
+					ValueChanged(element, oldValue, newValue);
+				}
+			}
 		}
 		
 		#endregion
