@@ -168,5 +168,23 @@ namespace Sawczyn.EFDesigner.EFModel
                                                                                                               .OfType<AssociationConnector>()))
             connector.Invalidate();
       }
+
+      /// <summary>
+      ///   Get the 'DeleteBehaviour' SQL string from a DeleteAction value.
+      /// </summary>
+      /// <param name="deleteAction"></param>
+      /// <returns></returns>
+      public static string GetDeleteActionSqlString(DeleteAction deleteAction)
+      {
+         switch(deleteAction)
+         {
+            case DeleteAction.None:
+               return "DeleteBehavior.NoAction";
+
+            default:
+            case DeleteAction.Cascade:
+               return "DeleteBehavior.Cascade";
+         }
+      }
    }
 }

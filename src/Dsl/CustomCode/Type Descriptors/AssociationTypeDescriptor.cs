@@ -53,10 +53,10 @@ namespace Sawczyn.EFDesigner.EFModel
 
             // only display delete behavior on the principal end
             // except that owned types don't have deletion behavior choices
-            if (association.SourceRole != EndpointRole.Principal || association.Source.IsDependentType || association.Target.IsDependentType)
+            if ((association.SourceRole != EndpointRole.Principal && association.SourceRole != EndpointRole.NotSet) || association.Source.IsDependentType || association.Target.IsDependentType)
                propertyDescriptors.Remove("SourceDeleteAction");
 
-            if (association.TargetRole != EndpointRole.Principal || association.Source.IsDependentType || association.Target.IsDependentType)
+            if ((association.TargetRole != EndpointRole.Principal && association.TargetRole != EndpointRole.NotSet) || association.Source.IsDependentType || association.Target.IsDependentType)
                propertyDescriptors.Remove("TargetDeleteAction");
 
             // only show join table details if is *..* association

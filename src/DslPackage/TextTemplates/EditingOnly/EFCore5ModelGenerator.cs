@@ -726,8 +726,8 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
 
                string segment =
                   "UsingEntity<Dictionary<string, object>>("
-                + $"right => right.HasOne<{association.Target.FullName}>().WithMany().HasForeignKey({targetFKs}).OnDelete(DeleteBehavior.Cascade),"
-                + $"left => left.HasOne<{association.Source.FullName}>().WithMany().HasForeignKey({sourceFKs}).OnDelete(DeleteBehavior.Cascade),"
+                + $"right => right.HasOne<{association.Target.FullName}>().WithMany().HasForeignKey({targetFKs}).OnDelete({PresentationHelper.GetDeleteActionSqlString(association.TargetDeleteAction)}),"
+                + $"left => left.HasOne<{association.Source.FullName}>().WithMany().HasForeignKey({sourceFKs}).OnDelete({PresentationHelper.GetDeleteActionSqlString(association.SourceDeleteAction)}),"
                 + $"join => join.ToTable(\"{joinTable}\"))";
 
                segments.Add(segment);
