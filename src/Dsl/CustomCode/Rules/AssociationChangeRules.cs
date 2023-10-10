@@ -136,6 +136,15 @@ namespace Sawczyn.EFDesigner.EFModel
                      break;
                   }
 
+               case "SourceFKColumnName":
+                  {
+                     if (element is BidirectionalAssociation bidiElement && !string.IsNullOrEmpty(bidiElement.SourceFKColumnName))
+                     {
+                        ValidateForeignKeyColumnNames(bidiElement.SourceFKColumnName, bidiElement.Source.IdentityAttributes, errorMessages);
+                     }
+                     break;
+                  }
+
                case "SourceMultiplicity":
                   {
                      if (!ValidateMultiplicity(element, modelRoot, errorMessages, ref doForeignKeyFixup))
@@ -285,6 +294,15 @@ namespace Sawczyn.EFDesigner.EFModel
                         }
                      }
 
+                     break;
+                  }
+
+               case "TargetFKColumnName":
+                  {
+                     if (element is BidirectionalAssociation bidiElement && !string.IsNullOrEmpty(bidiElement.TargetFKColumnName))
+                     {
+                        ValidateForeignKeyColumnNames(bidiElement.TargetFKColumnName, bidiElement.Target.IdentityAttributes, errorMessages);
+                     }
                      break;
                   }
             }
@@ -536,6 +554,14 @@ namespace Sawczyn.EFDesigner.EFModel
             errorMessages.AddRange(element.GetFKAutoIdentityErrors()
                                           .Select(attribute => $"{attribute.Name} in {element.Dependent.FullName} is an auto-generated identity. Migration will fail."));
          }
+      }
+
+      private static void ValidateForeignKeyColumnNames(string columnNames, IEnumerable<ModelAttribute> attributes, List<string> errorMessages)
+      {
+         string[] columnNamesParts = columnNames.Split(',');
+
+         if (columnNamesParts.Length != attributes.Count()) 
+            errorMessages.Add($"{attributes.Count()} (comma separated) column name(s) are required because of the number of entity identities");
       }
 
       private bool ValidateMultiplicity(Association element, ModelRoot modelRoot, List<string> errorMessages, ref bool doForeignKeyFixup)
