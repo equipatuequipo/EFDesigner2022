@@ -267,8 +267,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                      break;
                }
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(modelAttribute.DatabaseDefaultValue))
+            {
                segments.Add($"HasDefaultValueSql(\"{modelAttribute.DatabaseDefaultValue}\")");
+            }
 
             if (!string.IsNullOrEmpty(modelAttribute.DatabaseCollation)
              && modelAttribute.DatabaseCollation != modelRoot.DatabaseCollationDefault
