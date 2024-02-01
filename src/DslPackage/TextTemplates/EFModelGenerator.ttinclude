@@ -890,18 +890,6 @@
             Output("}");
             NL();
 
-            if ((visibility != "public") && !modelClass.IsAbstract)
-            {
-               Output("/// <summary>");
-               Output("/// Replaces default constructor, since it's protected. Caller assumes responsibility for setting all required values before saving.");
-               Output("/// </summary>");
-               Output($"public static {modelClass.Name} Create{modelClass.Name}Unsafe()");
-               Output("{");
-               Output($"return new {modelClass.Name}();");
-               Output("}");
-               NL();
-            }
-
             /***********************************************************************/
             // Constructor with required parameters (if necessary)
             /***********************************************************************/
@@ -909,32 +897,6 @@
             if (modelClass.CreateConstructors && (hasRequiredParameters || hasRequiredNavigationProperties))
             {
                WriteConstructorsWithRequiredProperties(modelClass, remarks, requiredNavigationProperties);
-
-               if (!modelClass.IsAbstract)
-               {
-                  Output("/// <summary>");
-                  Output("/// Static create function (for use in LINQ queries, etc.)");
-                  Output("/// </summary>");
-                  WriteConstructorComments(modelClass);
-
-                  string newToken = string.Empty;
-                  List<string> requiredParameters = GetRequiredParameters(modelClass, null, true);
-
-                  if (!AllSuperclassesAreNullOrAbstract(modelClass))
-                  {
-                     List<string> superclassRequiredParameters = GetRequiredParameters(modelClass.Superclass, null, true);
-
-                     if (!requiredParameters.Except(superclassRequiredParameters).Any())
-                        newToken = "new ";
-                  }
-
-                  List<string> requiredParameterNames = GetRequiredParameterNames(modelClass, true);
-                  Output($"public static {newToken}{modelClass.Name} Create({string.Join(", ", requiredParameters)})");
-                  Output("{");
-                  Output($"return new {modelClass.Name}({string.Join(", ", requiredParameterNames)});");
-                  Output("}");
-                  NL();
-               }
             }
          }
 
