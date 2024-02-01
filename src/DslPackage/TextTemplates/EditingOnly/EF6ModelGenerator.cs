@@ -384,6 +384,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                efModelFileManager.StartNewFile(Path.Combine(modelClass.EffectiveOutputDirectory, $"{modelClass.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteClass(modelClass);
             }
 
@@ -393,6 +394,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                efModelFileManager.StartNewFile(Path.Combine(modelEnum.EffectiveOutputDirectory, $"{modelEnum.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteEnum(modelEnum);
             }
 
@@ -402,15 +404,18 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                efModelFileManager.StartNewFile(Path.Combine(modelRoot.ContextOutputDirectory, $"{modelRoot.EntityContainerName}DatabaseInitializer{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteDatabaseInitializer();
             }
 
             ClearIndent();
             efModelFileManager.StartNewFile(Path.Combine(modelRoot.ContextOutputDirectory, $"{modelRoot.EntityContainerName}DbMigrationConfiguration{fileNameMarker}.cs"));
+            Output("#nullable enable");
             WriteMigrationConfiguration();
 
             ClearIndent();
             efModelFileManager.StartNewFile(Path.Combine(modelRoot.ContextOutputDirectory, $"{modelRoot.EntityContainerName}{fileNameMarker}.cs"));
+            Output("#nullable enable");
             WriteDbContext();
          }
 

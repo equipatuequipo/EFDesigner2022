@@ -220,26 +220,25 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             get
             {
                return new[]
-                   {
-                "Binary",
-                "Geography",
-                "GeographyCollection",
-                "GeographyLineString",
-                "GeographyMultiLineString",
-                "GeographyMultiPoint",
-                "GeographyMultiPolygon",
-                "GeographyPoint",
-                "GeographyPolygon",
-                "Geometry",
-                "GeometryCollection",
-                "GeometryLineString",
-                "GeometryMultiLineString",
-                "GeometryMultiPoint",
-                "GeometryMultiPolygon",
-                "GeometryPoint",
-                "GeometryPolygon",
-                "String"
-            };
+               {
+                   "Binary",
+                   "Geography",
+                   "GeographyCollection",
+                   "GeographyLineString",
+                   "GeographyMultiLineString",
+                   "GeographyMultiPoint",
+                   "GeographyMultiPolygon",
+                   "GeographyPoint",
+                   "GeographyPolygon",
+                   "Geometry",
+                   "GeometryCollection",
+                   "GeometryLineString",
+                   "GeometryMultiLineString",
+                   "GeometryMultiPoint",
+                   "GeometryMultiPolygon",
+                   "GeometryPoint",
+                   "GeometryPolygon"
+               };
             }
          }
          /// <summary>
@@ -1245,16 +1244,18 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                                                                         .Where(x => !x.ConstructorParameterOnly)
                                                                         .OrderBy(x => x.PropertyName))
             {
+               string nullableIndicator = navigationProperty.Required ? string.Empty : "?";
+
                string type = navigationProperty.IsCollection
                                 ? $"ICollection<{navigationProperty.ClassType.FullName}>"
-                                : navigationProperty.ClassType.FullName;
+                                : $"{navigationProperty.ClassType.FullName}{nullableIndicator}";
 
                if (!navigationProperty.IsAutoProperty)
                {
                   Output("/// <summary>");
                   Output($"/// Backing field for {navigationProperty.PropertyName}");
                   Output("/// </summary>");
-                  Output($"protected {type} {navigationProperty.BackingFieldName};");
+                  Output($"protected {type}{nullableIndicator} {navigationProperty.BackingFieldName};");
                   NL();
 
                   if (!navigationProperty.IsCollection)
@@ -1346,17 +1347,17 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                }
                else
                {
-                  Output($"public virtual {type} {navigationProperty.PropertyName}");
+                  Output($"public virtual {type}{nullableIndicator} {navigationProperty.PropertyName}");
                   Output("{");
                   Output("get");
                   Output("{");
-                  Output($"{type} value = {navigationProperty.BackingFieldName};");
+                  Output($"{type}{nullableIndicator} value = {navigationProperty.BackingFieldName};");
                   Output($"Get{navigationProperty.PropertyName}(ref value);");
                   Output($"return ({navigationProperty.BackingFieldName} = value);");
                   Output("}");
                   Output("set");
                   Output("{");
-                  Output($"{type} oldValue = {navigationProperty.PropertyName};");
+                  Output($"{type}{nullableIndicator} oldValue = {navigationProperty.PropertyName};");
                   Output($"Set{navigationProperty.PropertyName}(oldValue, ref value);");
                   Output("if (oldValue != value)");
                   Output("{");

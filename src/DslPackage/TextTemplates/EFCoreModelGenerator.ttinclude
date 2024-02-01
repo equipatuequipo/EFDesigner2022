@@ -346,6 +346,7 @@
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelClass.EffectiveOutputDirectory, $"{modelClass.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteClass(modelClass);
             }
 
@@ -354,6 +355,7 @@
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelEnum.EffectiveOutputDirectory, $"{modelEnum.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteEnum(modelEnum);
             }
 
@@ -367,7 +369,9 @@
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelRoot.ContextOutputDirectory, $"{modelRoot.EntityContainerName}Factory{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteDbContextFactory();
+               Output("#nullable enable");
             }
          }
 

@@ -363,7 +363,7 @@ namespace Sawczyn.EFDesigner.EFModel
                                                              "long", "long?", "Nullable<long>",
                                                              "short", "short?", "Nullable<short>",
                                                              "Single", "Single?", "Nullable<Single>",
-                                                             "String", "string",
+                                                             "String", "string?", "Nullable<String",
                                                              "TimeSpan", "TimeSpan?", "Nullable<TimeSpan>"
                                                           });
 

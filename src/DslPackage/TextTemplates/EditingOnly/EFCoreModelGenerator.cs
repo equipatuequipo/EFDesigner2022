@@ -340,6 +340,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelClass.EffectiveOutputDirectory, $"{modelClass.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteClass(modelClass);
             }
 
@@ -348,6 +349,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelEnum.EffectiveOutputDirectory, $"{modelEnum.Name}{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteEnum(modelEnum);
             }
 
@@ -361,7 +363,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                ClearIndent();
                manager.StartNewFile(Path.Combine(modelRoot.ContextOutputDirectory, $"{modelRoot.EntityContainerName}Factory{fileNameMarker}.cs"));
+               Output("#nullable enable");
                WriteDbContextFactory();
+               Output("#nullable enable");
             }
          }
 
