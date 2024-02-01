@@ -1206,7 +1206,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                                                                         .Where(x => !x.ConstructorParameterOnly)
                                                                         .OrderBy(x => x.PropertyName))
             {
+               // Two properties are required because each indicator is placed in a different position
                string nullableIndicator = navigationProperty.Required ? string.Empty : "?";
+               string requiredIndicator = navigationProperty.Required ? "required " : string.Empty;
 
                string type = navigationProperty.IsCollection
                                 ? $"ICollection<{navigationProperty.ClassType.FullName}>"
@@ -1217,7 +1219,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                   Output("/// <summary>");
                   Output($"/// Backing field for {navigationProperty.PropertyName}");
                   Output("/// </summary>");
-                  Output($"protected {type}{nullableIndicator} {navigationProperty.BackingFieldName};");
+                  Output($"protected {requiredIndicator}{type}{nullableIndicator} {navigationProperty.BackingFieldName};");
                   NL();
 
                   if (!navigationProperty.IsCollection)
@@ -1291,7 +1293,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                   if (navigationProperty.IsCollection)
                      Output($"public virtual {type} {navigationProperty.PropertyName} {{ get; private set; }}");
                   else
-                     Output($"public virtual {type} {navigationProperty.PropertyName} {{ get; set; }}");
+                     Output($"public {requiredIndicator}virtual {type} {navigationProperty.PropertyName} {{ get; set; }}");
                }
                else if (navigationProperty.IsCollection)
                {
@@ -1309,7 +1311,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                }
                else
                {
-                  Output($"public virtual {type}{nullableIndicator} {navigationProperty.PropertyName}");
+                  Output($"public {requiredIndicator}virtual {type}{nullableIndicator} {navigationProperty.PropertyName}");
                   Output("{");
                   Output("get");
                   Output("{");
@@ -1399,6 +1401,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                                     ? "virtual "
                                     : string.Empty;
 
+               string required = modelAttribute.Required && modelAttribute.Type != typeof(int).Name && modelAttribute.Type != typeof(long).Name
+                                    ? "required "
+                                    : string.Empty;
+
                if (!modelAttribute.IsConcurrencyToken && !modelAttribute.AutoProperty)
                {
                   string visibility = modelAttribute.Indexed
@@ -1455,10 +1461,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                if (modelAttribute.IsAbstract)
                   Output($"public abstract {modelAttribute.FQPrimitiveType}{nullable} {modelAttribute.Name} {{ get; {setterVisibility}set; }}");
                else if (modelAttribute.IsConcurrencyToken || modelAttribute.AutoProperty)
-                  Output($"public {@virtual}{modelAttribute.FQPrimitiveType}{nullable} {modelAttribute.Name} {{ get; {setterVisibility}set; }}");
+                  Output($"public {required}{@virtual}{modelAttribute.FQPrimitiveType}{nullable} {modelAttribute.Name} {{ get; {setterVisibility}set; }}");
                else
                {
-                  Output($"public {@virtual}{modelAttribute.FQPrimitiveType}{nullable} {modelAttribute.Name}");
+                  Output($"public {required}{@virtual}{modelAttribute.FQPrimitiveType}{nullable} {modelAttribute.Name}");
                   Output("{");
                   Output("get");
                   Output("{");
