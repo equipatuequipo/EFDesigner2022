@@ -28,9 +28,8 @@ $assemblyInfo =
    
 foreach ($f in $assemblyInfo) {
    try {
-      [regex]::Replace((get-content $f -Raw), '\[assembly:\s*AssemblyVersion\("[\d\.]+"\)\]', '[assembly: AssemblyVersion("'+$version+'")]') | set-content $f
-      [regex]::Replace((get-content $f -Raw), '\[assembly:\s*AssemblyFileVersion\("[\d\.]+"\)\]', '[assembly: AssemblyFileVersion("'+$version+'")]') | set-content $f
-      [regex]::Replace((get-content $f -Raw), '\r?\n\r?\n\r?\n[\r\n]*', "") | set-content $f # Clean up the blank lines at the end of the file that, for some reason, appear there
+      [regex]::Replace((get-content $f -Raw), '\[assembly\s*:\s*AssemblyVersion\("[\d\.]+"\)\]', '[assembly : AssemblyVersion("'+$version+'")]') | set-content -NoNewline $f
+      [regex]::Replace((get-content $f -Raw), '\[assembly\s*:\s*AssemblyFileVersion\("[\d\.]+"\)\]', '[assembly : AssemblyFileVersion("'+$version+'")]') | set-content -NoNewline $f
    } catch {
       "** Did not process $f"
    }
@@ -53,10 +52,8 @@ $files =
 foreach ($f in $files) {
    sleep 1
    try {
-   [regex]::Replace((get-content $f -Raw), '(\s*)// EFDesigner v[\d\.]+', '$1// EFDesigner v'+$version) | set-content $f
-   [regex]::Replace((get-content $f -Raw), '\r?\n\r?\n\r?\n[\r\n]*', "") | set-content $f
+      [regex]::Replace((get-content $f -Raw), '(\s*)// EFDesigner v[\d\.]+', '$1// EFDesigner v'+$version) | set-content -NoNewline $f
    } catch {
       "** Did not process $f"
    }
 }
-
