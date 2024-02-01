@@ -716,10 +716,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
 
             if (association.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany && association.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany)
             {
-               string targetFKs = string.Join(", ",string.IsNullOrWhiteSpace(association.TargetFKColumnName) 
+               string targetFKs = string.Join(", ", !string.IsNullOrWhiteSpace(association.TargetFKColumnName) 
                   ? association.TargetFKColumnName.Split(',').Select(a => $"\"{a}\"")
                   : association.Target.IdentityAttributes.Select(a => $"\"{association.Target.Name}_{a.Name}\""));
-               string sourceFKs = string.Join(", ",string.IsNullOrWhiteSpace(association.SourceFKColumnName) 
+               string sourceFKs = string.Join(", ", !string.IsNullOrWhiteSpace(association.SourceFKColumnName) 
                   ? association.SourceFKColumnName.Split(',').Select(a => $"\"{a}\"")
                   : association.Source.IdentityAttributes.Select(a => $"\"{association.Source.Name}_{a.Name}\""));
                string joinTable = string.IsNullOrEmpty(association.JoinTableName) ? $"{association.Target.Name}_x_{association.Source.Name}" : association.JoinTableName;
