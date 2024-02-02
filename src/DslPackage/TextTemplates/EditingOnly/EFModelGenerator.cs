@@ -699,6 +699,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             Output("using System.ComponentModel;");
             Output("using System.ComponentModel.DataAnnotations;");
             Output("using System.ComponentModel.DataAnnotations.Schema;");
+            Output("using System.Diagnostics.CodeAnalysis;");
             Output("using System.Linq;");
             Output("using System.Runtime.CompilerServices;");
 
@@ -1208,7 +1209,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                // Two properties are required because each indicator is placed in a different position
                string nullableIndicator = navigationProperty.Required ? string.Empty : "?";
-               string requiredIndicator = navigationProperty.Required ? "required " : string.Empty;
+               string requiredIndicator = navigationProperty.Required && !(navigationProperty.AssociationObject.Principal?.IsAbstract ?? false)
+                                             ? "required "
+                                             : string.Empty;
 
                string type = navigationProperty.IsCollection
                                 ? $"ICollection<{navigationProperty.ClassType.FullName}>"
@@ -1286,6 +1289,11 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                {
                   if (!customAttributes.Contains("NotMapped"))
                      Output("[NotMapped]");
+               }
+
+               if (!navigationProperty.IsCollection && (navigationProperty.AssociationObject.Principal?.IsAbstract ?? false))
+               {
+                  Output("[AllowNull]");
                }
 
                if (navigationProperty.IsAutoProperty)
