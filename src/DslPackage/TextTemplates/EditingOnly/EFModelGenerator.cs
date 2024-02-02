@@ -920,6 +920,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             Output("/// </summary>");
 
             WriteConstructorComments(modelClass);
+            Output("[SetsRequiredMembers]");
             Output($"{visibility} {modelClass.Name}({string.Join(", ", GetRequiredParameters(modelClass, null, true))})");
             Output("{");
 
