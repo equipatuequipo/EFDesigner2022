@@ -999,11 +999,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                             : $"this.{targetObjectName} = {parameterName};");
                }
 
-               if (!string.IsNullOrEmpty(otherSide.PropertyName))
+               if (!string.IsNullOrEmpty(otherSide.PropertyName) && !otherSide.IsCollection)
                {
-                  Output(otherSide.IsCollection
-                            ? $"{parameterName}.{otherSide.PropertyName}.Add(this);"
-                            : $"{parameterName}.{otherSide.PropertyName} = this;");
+                  Output($"{parameterName}.{otherSide.PropertyName} = this;");
                }
 
                NL();
