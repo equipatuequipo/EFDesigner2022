@@ -140,7 +140,7 @@ namespace Sawczyn.EFDesigner.EFModel
                   {
                      if (element is BidirectionalAssociation bidiElement && !string.IsNullOrEmpty(bidiElement.SourceFKColumnName))
                      {
-                        ValidateForeignKeyColumnNames(bidiElement.SourceFKColumnName, bidiElement.Source.IdentityAttributes, errorMessages);
+                        ValidateForeignKeyColumnNames(bidiElement.SourceFKColumnName, bidiElement.Source.AllIdentityAttributes, errorMessages);
                      }
                      break;
                   }
@@ -301,7 +301,7 @@ namespace Sawczyn.EFDesigner.EFModel
                   {
                      if (element is BidirectionalAssociation bidiElement && !string.IsNullOrEmpty(bidiElement.TargetFKColumnName))
                      {
-                        ValidateForeignKeyColumnNames(bidiElement.TargetFKColumnName, bidiElement.Target.IdentityAttributes, errorMessages);
+                        ValidateForeignKeyColumnNames(bidiElement.TargetFKColumnName, bidiElement.Target.AllIdentityAttributes, errorMessages);
                      }
                      break;
                   }

@@ -718,10 +718,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                string targetFKs = string.Join(", ", !string.IsNullOrWhiteSpace(association.TargetFKColumnName) 
                   ? association.TargetFKColumnName.Split(',').Select(a => $"\"{a}\"")
-                  : association.Target.IdentityAttributes.Select(a => $"\"{association.Target.Name}_{a.Name}\""));
+                  : association.Target.AllIdentityAttributes.Select(a => $"\"{association.Target.Name}_{a.Name}\""));
                string sourceFKs = string.Join(", ", !string.IsNullOrWhiteSpace(association.SourceFKColumnName) 
                   ? association.SourceFKColumnName.Split(',').Select(a => $"\"{a}\"")
-                  : association.Source.IdentityAttributes.Select(a => $"\"{association.Source.Name}_{a.Name}\""));
+                  : association.Source.AllIdentityAttributes.Select(a => $"\"{association.Source.Name}_{a.Name}\""));
                string joinTable = string.IsNullOrEmpty(association.JoinTableName) ? $"{association.Target.Name}_x_{association.Source.Name}" : association.JoinTableName;
 
                string segment =
