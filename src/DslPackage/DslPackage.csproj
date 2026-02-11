@@ -88,12 +88,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.3.32804.24" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk" Version="17.3.32803.143" />
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Diagrams" Version="17.3.32803.143" />
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Shell" Version="17.3.32804.24" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -492,22 +489,22 @@ if "$(ConfigurationName)"=="Release" del "$(ProjectDir)Parsers\*.pdb
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0">
-      <Version>17.3.32804.24</Version>
+      <Version>17.14.40264</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
-      <Version>17.3.32804.24</Version>
+      <Version>17.10.40170</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.VSHost">
-      <Version>17.3.32804.24</Version>
+      <Version>17.14.40265</Version>
     </PackageReference>
     <PackageReference Include="QuikGraph" Version="2.5.0" />
     <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />
     <PackageReference Include="Shields.GraphViz">
       <Version>1.0.2</Version>
     </PackageReference>
-    <PackageReference Include="stdole" Version="17.3.32804.24" />
+    <PackageReference Include="stdole" Version="17.14.40260" />
     <PackageReference Include="StreamJsonRpc">
-      <Version>2.12.27</Version>
+      <Version>2.24.84</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime">
       <Version>4.3.1</Version>
@@ -518,13 +515,10 @@ if "$(ConfigurationName)"=="Release" del "$(ProjectDir)Parsers\*.pdb
     <PackageReference Include="System.Security.Cryptography.X509Certificates">
       <Version>4.3.2</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk" Version="17.0.31902.203" />
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Diagrams" Version="17.0.31902.203" />
-    <PackageReference Include="Microsoft.VisualStudio.TextTemplating" Version="17.3.32803.143" />
+    <PackageReference Include="Microsoft.VisualStudio.TextTemplating" Version="17.10.40170" />
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0" Version="17.0.32112.339" />
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.11.0" Version="17.0.32112.339" />
-    <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Modeling" Version="17.3.32804.24" />
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Shell" Version="17.0.31902.203" />
+    <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Modeling" Version="17.10.40171" />
   </ItemGroup>
   <ItemGroup />
 </Project>

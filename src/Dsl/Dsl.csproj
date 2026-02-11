@@ -86,24 +86,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk" Version="17.3.32803.143" />
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Diagrams" Version="17.3.32803.143" />
+    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk" Version="17.10.40171" />
+    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Diagrams" Version="17.10.40171" />
     <PackageReference Include="Microsoft.VisualStudio.RpcContracts">
-      <Version>17.3.19</Version>
+      <Version>17.14.20</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK">
-      <Version>17.3.32804.24</Version>
+      <Version>17.14.40265</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0">
-      <Version>17.3.32804.24</Version>
+      <Version>17.14.40264</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
-      <Version>17.3.32804.24</Version>
+      <Version>17.10.40170</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.TextTemplating" Version="17.3.32803.143" />
+    <PackageReference Include="Microsoft.VisualStudio.TextTemplating" Version="17.10.40170" />
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0" Version="17.0.32112.339" />
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.11.0" Version="17.0.32112.339" />
-    <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Modeling" Version="17.3.32804.24" />
+    <PackageReference Include="Microsoft.VisualStudio.TextTemplating.Modeling" Version="17.10.40171" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Utilities\ParsingModels\AssociationRole.cs">
@@ -623,29 +623,29 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Shell" Version="17.3.32804.24" />
+    <PackageReference Include="Microsoft.VisualStudio.Modeling.Sdk.Shell" Version="17.10.40171" />
     <PackageReference Include="DataConnectionDialog">
       <Version>1.2.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis">
-      <Version>4.3.0</Version>
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
-      <Version>3.3.3</Version>
+      <Version>3.11.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.TextTemplating.VSHost">
-      <Version>17.3.32804.24</Version>
+      <Version>17.14.40265</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Threading">
-      <Version>17.3.44</Version>
+      <Version>17.14.15</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.4</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_green">
-      <Version>2.1.0</Version>
+      <Version>2.1.11</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.linux">
       <Version>1.1.14</Version>
@@ -654,16 +654,16 @@
       <Version>1.1.14</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.v110_xp">
-      <Version>1.1.14</Version>
+      <Version>1.1.15</Version>
     </PackageReference>
     <PackageReference Include="StreamJsonRpc">
-      <Version>2.12.27</Version>
+      <Version>2.24.84</Version>
     </PackageReference>
     <PackageReference Include="System.AppContext">
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Buffers">
-      <Version>4.5.1</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Collections">
       <Version>4.3.0</Version>
@@ -672,7 +672,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Composition">
-      <Version>6.0.0</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Console">
       <Version>4.3.1</Version>
@@ -708,13 +708,13 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
-      <Version>4.5.5</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.6.0-preview5.19224.8</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection">
       <Version>4.3.0</Version>
@@ -747,7 +747,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Encoding.CodePages">
-      <Version>6.0.0</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Encoding.Extensions">
       <Version>4.3.0</Version>
@@ -759,7 +759,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.6.0-preview.18571.3</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Parallel">
       <Version>4.3.0</Version>
@@ -768,7 +768,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Xml.ReaderWriter">
       <Version>4.3.1</Version>

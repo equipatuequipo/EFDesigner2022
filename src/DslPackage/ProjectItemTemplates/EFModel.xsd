@@ -1240,6 +1240,9 @@
   <!-- DesignElement -->
   <xsd:element name="designElement" abstract="true" type="DesignElement" substitutionGroup="core:modelElement" />
   <xsd:complexType name="DesignElement" abstract="true" >
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.DesignElement</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="core:ModelElement">
         <!-- Id -->
@@ -1424,7 +1427,11 @@
           </xsd:annotation>
         </xsd:attribute>
         <!-- Property: IsTargetImplementNotifyTracking -->
-        <xsd:attribute name="isTargetImplementNotifyTracking" type="xsd:boolean" />
+        <xsd:attribute name="isTargetImplementNotifyTracking" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.Association.Is Target Implement Notify Tracking</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
         <!-- Property: FKPropertyName -->
         <xsd:attribute name="fKPropertyName" type="xsd:string" >
           <xsd:annotation>
@@ -1692,7 +1699,11 @@
           </xsd:annotation>
         </xsd:attribute>
         <!-- Property: IsSourceImplementNotifyTracking -->
-        <xsd:attribute name="isSourceImplementNotifyTracking" type="xsd:boolean" />
+        <xsd:attribute name="isSourceImplementNotifyTracking" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.BidirectionalAssociation.Is Source Implement Notify Tracking</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
         <!-- Property: SourcePropertyAccessMode -->
         <xsd:attribute name="sourcePropertyAccessMode" type="PropertyAccessMode" >
           <xsd:annotation>
@@ -1846,6 +1857,9 @@
   <!-- ModelRootHasClasses -->
   <xsd:element name="modelRootHasClasses" type="ModelRootHasClasses" substitutionGroup="core:modelElement" />
   <xsd:complexType name="ModelRootHasClasses">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ModelRootHasClasses</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="core:ModelElement">
         <xsd:sequence minOccurs="0" maxOccurs="1">
@@ -1886,6 +1900,9 @@
   <!-- CommentReferencesSubjects -->
   <xsd:element name="commentReferencesSubjects" abstract="true" type="CommentReferencesSubjects" substitutionGroup="core:modelElement" />
   <xsd:complexType name="CommentReferencesSubjects" abstract="true" >
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.CommentReferencesSubjects</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="core:ModelElement">
         <xsd:sequence minOccurs="0" maxOccurs="1">
@@ -1926,6 +1943,9 @@
   <!-- CommentReferencesClasses -->
   <xsd:element name="commentReferencesClasses" type="CommentReferencesClasses" substitutionGroup="commentReferencesSubjects" />
   <xsd:complexType name="CommentReferencesClasses">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.CommentReferencesClasses</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="CommentReferencesSubjects">
         <xsd:sequence minOccurs="0" maxOccurs="1">
@@ -1955,6 +1975,9 @@
   <!-- CommentReferencesEnums -->
   <xsd:element name="commentReferencesEnums" type="CommentReferencesEnums" substitutionGroup="commentReferencesSubjects" />
   <xsd:complexType name="CommentReferencesEnums">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.CommentReferencesEnums</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="CommentReferencesSubjects">
         <xsd:sequence minOccurs="0" maxOccurs="1">
@@ -1984,6 +2007,9 @@
   <!-- ModelRootHasModelDiagrams -->
   <xsd:element name="modelRootHasModelDiagrams" type="ModelRootHasModelDiagrams" substitutionGroup="core:modelElement" />
   <xsd:complexType name="ModelRootHasModelDiagrams">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ModelRootHasModelDiagrams</xsd:documentation>
+    </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="core:ModelElement">
         <xsd:sequence minOccurs="0" maxOccurs="1">
@@ -2159,6 +2185,9 @@
   
   <!-- Enum DatabaseInitializerKind -->
   <xsd:simpleType name="DatabaseInitializerKind">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.DatabaseInitializerKind</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="CreateDatabaseIfNotExists">
         <xsd:annotation>
@@ -2190,6 +2219,9 @@
   
   <!-- Enum HTML5Type -->
   <xsd:simpleType name="HTML5Type">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.HTML5Type</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="None">
         <xsd:annotation>
@@ -2285,6 +2317,9 @@
   
   <!-- Enum ConcurrencyOverride -->
   <xsd:simpleType name="ConcurrencyOverride">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ConcurrencyOverride</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="None">
         <xsd:annotation>
@@ -2306,6 +2341,9 @@
   
   <!-- Enum EFVersion -->
   <xsd:simpleType name="EFVersion">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.EFVersion</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="EF6">
         <xsd:annotation>
@@ -2408,7 +2446,11 @@
           <xsd:documentation>Class is the controlling (i.e, principal) part of the association</xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
-      <xsd:enumeration value="NotApplicable"/>
+      <xsd:enumeration value="NotApplicable">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.EndpointRole.NotApplicable</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
       <xsd:enumeration value="NotSet">
         <xsd:annotation>
           <xsd:documentation>Dependent/Principal roles are design decisions and have not been set</xsd:documentation>
@@ -2447,9 +2489,21 @@
       <xsd:documentation>Database manifest token. Optimization if runtime database type is known and unchanging.</xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="SqlServer"/>
-      <xsd:enumeration value="SqlServer2012"/>
-      <xsd:enumeration value="None"/>
+      <xsd:enumeration value="SqlServer">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.DatabaseKind.SqlServer</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="SqlServer2012">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.DatabaseKind.SqlServer2012</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="None">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.DatabaseKind.None</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
   
@@ -2459,32 +2513,119 @@
       <xsd:documentation>Available value converters for EFCore (&gt;= 2.1)</xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="BoolToZeroOneConverter"/>
-      <xsd:enumeration value="BoolToStringConverter"/>
-      <xsd:enumeration value="BoolToTwoValuesConverter"/>
-      <xsd:enumeration value="BytesToStringConverter"/>
-      <xsd:enumeration value="CastingConverter"/>
-      <xsd:enumeration value="CharToStringConverter"/>
-      <xsd:enumeration value="DateTimeOffsetToBinaryConverter"/>
-      <xsd:enumeration value="DateTimeOffsetToBytesConverter"/>
-      <xsd:enumeration value="DateTimeOffsetToStringConverter"/>
-      <xsd:enumeration value="DateTimeToBinaryConverter"/>
-      <xsd:enumeration value="DateTimeToStringConverter"/>
-      <xsd:enumeration value="DateTimeToTicksConverter"/>
-      <xsd:enumeration value="EnumToNumberConverter"/>
-      <xsd:enumeration value="EnumToStringConverter"/>
-      <xsd:enumeration value="GuidToBytesConverter"/>
-      <xsd:enumeration value="GuidToStringConverter"/>
-      <xsd:enumeration value="NumberToBytesConverter"/>
-      <xsd:enumeration value="NumberToStringConverter"/>
-      <xsd:enumeration value="StringToBytesConverter"/>
-      <xsd:enumeration value="TimeSpanToStringConverter"/>
-      <xsd:enumeration value="TimeSpanToTicksConverter"/>
+      <xsd:enumeration value="BoolToZeroOneConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.BoolToZeroOneConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="BoolToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.BoolToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="BoolToTwoValuesConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.BoolToTwoValuesConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="BytesToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.BytesToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="CastingConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.CastingConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="CharToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.CharToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeOffsetToBinaryConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeOffsetToBinaryConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeOffsetToBytesConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeOffsetToBytesConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeOffsetToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeOffsetToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeToBinaryConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeToBinaryConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="DateTimeToTicksConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.DateTimeToTicksConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="EnumToNumberConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.EnumToNumberConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="EnumToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.EnumToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GuidToBytesConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.GuidToBytesConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GuidToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.GuidToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="NumberToBytesConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.NumberToBytesConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="NumberToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.NumberToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="StringToBytesConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.StringToBytesConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="TimeSpanToStringConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.TimeSpanToStringConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="TimeSpanToTicksConverter">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.ValueConverter.TimeSpanToTicksConverter</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
   
   <!-- Enum AutomaticAction -->
   <xsd:simpleType name="AutomaticAction">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.AutomaticAction</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="False">
         <xsd:annotation>
@@ -2506,6 +2647,9 @@
   
   <!-- Enum PropertyAccessMode -->
   <xsd:simpleType name="PropertyAccessMode">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.PropertyAccessMode</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="Field">
         <xsd:annotation>
@@ -2561,6 +2705,9 @@
   
   <!-- Enum TypeAccessModifierExt -->
   <xsd:simpleType name="TypeAccessModifierExt">
+    <xsd:annotation>
+      <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.TypeAccessModifierExt</xsd:documentation>
+    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="Internal">
         <xsd:annotation>
@@ -2574,7 +2721,11 @@
         </xsd:annotation>
       </xsd:enumeration>
       <xsd:enumeration value="Public"/>
-      <xsd:enumeration value="Default"/>
+      <xsd:enumeration value="Default">
+        <xsd:annotation>
+          <xsd:documentation>Description for Sawczyn.EFDesigner.EFModel.TypeAccessModifierExt.Default</xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
   
