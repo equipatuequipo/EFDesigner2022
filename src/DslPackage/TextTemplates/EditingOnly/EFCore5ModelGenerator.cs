@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 
 using Sawczyn.EFDesigner.EFModel.Annotations;
@@ -22,11 +24,49 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
       /// </summary>
       public class EFCore5ModelGenerator : EFCore3ModelGenerator
       {
+         private sealed class ManyToManyForeignKey
+         {
+            public string ColumnName { get; set; }
+
+            public string PropertyName { get; set; }
+
+            public string PropertyType { get; set; }
+         }
+
          /// <summary>
          /// Initializes a new instance of the EFCore5ModelGenerator class with the specified host object.
          /// </summary>
          /// <param name="host">The host object.</param>
          public EFCore5ModelGenerator(GeneratedTextTransformation host) : base(host) { }
+
+         public override void Generate(Manager manager)
+         {
+            base.Generate(manager);
+
+            string fileNameMarker = string.IsNullOrEmpty(modelRoot.FileNameMarker)
+                                       ? string.Empty
+                                       : $".{modelRoot.FileNameMarker}";
+
+            HashSet<string> emittedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (BidirectionalAssociation association in GatherGeneratedManyToManyAssociations())
+            {
+               string generatedClassName = GetGeneratedManyToManyClassName(association);
+
+               if (modelRoot.Classes.Any(c => c.Name == generatedClassName))
+                  continue;
+
+               string outputFilePath = Path.Combine(modelRoot.ContextOutputDirectory, $"{generatedClassName}{fileNameMarker}.cs");
+
+               if (!emittedFiles.Add(outputFilePath))
+                  continue;
+
+               ClearIndent();
+               manager.StartNewFile(outputFilePath);
+               Output("#nullable enable");
+               WriteGeneratedManyToManyClass(association);
+            }
+         }
 
          /// <summary>
          /// Configures bidirectional associations for a given ModelClass object.
@@ -300,6 +340,206 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             }
 
             return segments;
+         }
+
+         private IEnumerable<BidirectionalAssociation> GatherGeneratedManyToManyAssociations()
+         {
+            List<ModelClass> associationClasses = modelRoot.Store.ElementDirectory.AllElements
+                                                      .OfType<ModelClass>()
+                                                      .Where(mc => mc.IsAssociationClass)
+                                                      .ToList();
+
+            return modelRoot.Store.ElementDirectory.AllElements
+                            .OfType<BidirectionalAssociation>()
+                            .Where(a => a.Persistent
+                                     && a.GenerateManyToManyClass
+                                     && a.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                                     && a.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                                     && !associationClasses.Any(mc => mc.DescribedAssociationElementId == a.Id));
+         }
+
+         private static string BuildForeignKeyExpression(IEnumerable<ManyToManyForeignKey> foreignKeys)
+         {
+            List<ManyToManyForeignKey> keys = foreignKeys.ToList();
+
+            return keys.Count == 1
+                      ? $"x => x.{keys[0].PropertyName}"
+                      : $"x => new {{ x.{string.Join(", x.", keys.Select(k => k.PropertyName))} }}";
+         }
+
+         private static string BuildGeneratedForeignKeyPropertyName(ModelClass modelClass, ModelAttribute identityAttribute, string explicitPrefix = null)
+         {
+            string prefix = string.IsNullOrWhiteSpace(explicitPrefix)
+                               ? modelClass.Name
+                               : explicitPrefix;
+
+            return identityAttribute.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                      ? identityAttribute.Name
+                      : $"{prefix}{identityAttribute.Name}";
+         }
+
+         private List<ManyToManyForeignKey> BuildGeneratedManyToManyForeignKeys(BidirectionalAssociation association, bool sourceEnd)
+         {
+            ModelClass relatedClass = sourceEnd
+                                         ? association.Source
+                                         : association.Target;
+
+            string configuredColumnNames = sourceEnd
+                                              ? association.SourceFKColumnName
+                                              : association.TargetFKColumnName;
+
+            string[] splitColumnNames = string.IsNullOrWhiteSpace(configuredColumnNames)
+                                           ? Array.Empty<string>()
+                                           : configuredColumnNames.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrWhiteSpace(name)).ToArray();
+
+            string duplicatePrefix = (association.Source.Name == association.Target.Name)
+                                        ? (sourceEnd ? "Source" : "Target")
+                                        : string.Empty;
+
+            List<ManyToManyForeignKey> result = new List<ManyToManyForeignKey>();
+            int index = 0;
+
+            foreach (ModelAttribute identityAttribute in relatedClass.AllIdentityAttributes)
+            {
+               string propertyName = BuildGeneratedForeignKeyPropertyName(relatedClass, identityAttribute, duplicatePrefix);
+               string configuredName = splitColumnNames.Length > index
+                                          ? splitColumnNames[index]
+                                          : string.Empty;
+
+               result.Add(new ManyToManyForeignKey
+               {
+                  ColumnName = string.IsNullOrWhiteSpace(configuredName)
+                                  ? propertyName
+                                  : configuredName,
+                  PropertyName = propertyName,
+                  PropertyType = identityAttribute.FQPrimitiveType
+               });
+
+               ++index;
+            }
+
+            return result;
+         }
+
+         private string GetGeneratedManyToManyClassName(BidirectionalAssociation association)
+         {
+            string baseName = $"{association.Source.Name}_{association.Target.Name}";
+
+            bool hasConflictingAssociations = modelRoot.Store.ElementDirectory.AllElements
+                                                 .OfType<BidirectionalAssociation>()
+                                                 .Where(other => other != association
+                                                              && other.Persistent
+                                                              && other.GenerateManyToManyClass
+                                                              && other.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                                                              && other.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany)
+                                                 .Any(other =>
+                                                         (other.Source == association.Source && other.Target == association.Target)
+                                                      || (other.Source == association.Target && other.Target == association.Source));
+
+            if (hasConflictingAssociations || association.Source.Name == association.Target.Name)
+               baseName = $"{baseName}_{association.TargetPropertyName}_{association.SourcePropertyName}";
+
+            return baseName;
+         }
+
+         private static string GetJoinNavigationPropertyName(BidirectionalAssociation association, bool sourceEnd)
+         {
+            if (association.Source.Name != association.Target.Name)
+               return sourceEnd
+                         ? association.Source.Name
+                         : association.Target.Name;
+
+            return sourceEnd
+                      ? "Source"
+                      : "Target";
+         }
+
+         private static string GetJoinTableBuildActions(ModelRoot modelRoot, bool useTemporalTables)
+         {
+            return modelRoot.IsEFCore6Plus && useTemporalTables
+                      ? ", t => { t.IsTemporal(); }"
+                      : string.Empty;
+         }
+
+         private void WriteGeneratedManyToManyClass(BidirectionalAssociation association)
+         {
+            string className = GetGeneratedManyToManyClassName(association);
+            string sourceNavigationProperty = GetJoinNavigationPropertyName(association, true);
+            string targetNavigationProperty = GetJoinNavigationPropertyName(association, false);
+
+            List<ManyToManyForeignKey> sourceForeignKeys = BuildGeneratedManyToManyForeignKeys(association, true);
+            List<ManyToManyForeignKey> targetForeignKeys = BuildGeneratedManyToManyForeignKeys(association, false);
+
+            Output("using System;");
+            NL();
+
+            BeginNamespace(modelRoot.Namespace);
+            Output($"public partial class {className}");
+            Output("{");
+
+            foreach (ManyToManyForeignKey foreignKey in targetForeignKeys.Concat(sourceForeignKeys))
+               Output($"public {foreignKey.PropertyType} {foreignKey.PropertyName} {{ get; set; }}");
+
+            NL();
+            Output($"public virtual {association.Source.FullName} {sourceNavigationProperty} {{ get; set; }} = null!;");
+            Output($"public virtual {association.Target.FullName} {targetNavigationProperty} {{ get; set; }} = null!;");
+            Output("}");
+
+            EndNamespace(modelRoot.Namespace);
+            NL();
+         }
+
+         private void WriteBidirectionalAssociationWithGeneratedClass(ModelClass modelClass, BidirectionalAssociation association)
+         {
+            string indent = modelClass.ModelRoot.UseTabs
+                               ? "\t"
+                               : "   ";
+
+            string generatedClassName = GetGeneratedManyToManyClassName(association);
+            string sourceNavigationProperty = GetJoinNavigationPropertyName(association, true);
+            string targetNavigationProperty = GetJoinNavigationPropertyName(association, false);
+            string joinTable = string.IsNullOrEmpty(association.JoinTableName)
+                                  ? $"{association.Source.Name}_x_{association.Target.Name}"
+                                  : association.JoinTableName;
+            string buildActions = GetJoinTableBuildActions(modelClass.ModelRoot, association.UseTemporalTables);
+
+            List<ManyToManyForeignKey> sourceForeignKeys = BuildGeneratedManyToManyForeignKeys(association, true);
+            List<ManyToManyForeignKey> targetForeignKeys = BuildGeneratedManyToManyForeignKeys(association, false);
+            List<ManyToManyForeignKey> allForeignKeys = targetForeignKeys.Concat(sourceForeignKeys).ToList();
+
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (modelClass.ModelRoot.ChopMethodChains)
+               PushIndent("            ");
+            else
+               PushIndent(indent);
+
+            Output($".UsingEntity<{generatedClassName}>(");
+            PushIndent(indent);
+            Output("l => l");
+            PushIndent(indent);
+            Output($".HasOne(x => x.{targetNavigationProperty})");
+            Output(".WithMany()");
+            Output($".HasForeignKey({BuildForeignKeyExpression(targetForeignKeys)})");
+            Output($".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.TargetDeleteAction)}),");
+            PopIndent();
+            Output("r => r");
+            PushIndent(indent);
+            Output($".HasOne(x => x.{sourceNavigationProperty})");
+            Output(".WithMany()");
+            Output($".HasForeignKey({BuildForeignKeyExpression(sourceForeignKeys)})");
+            Output($".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.SourceDeleteAction)}),");
+            PopIndent();
+            Output("j =>");
+            Output("{");
+            Output($"j.ToTable(\"{joinTable}\"{buildActions});");
+            Output($"j.HasKey({BuildForeignKeyExpression(allForeignKeys)});");
+
+            foreach (ManyToManyForeignKey foreignKey in allForeignKeys.Where(fk => fk.ColumnName != fk.PropertyName))
+               Output($"j.Property(x => x.{foreignKey.PropertyName}).HasColumnName(\"{foreignKey.ColumnName}\");");
+
+            Output("});");
+            PopIndent();
+            PopIndent();
          }
 
          private void WriteBidirectionalAssociationWithAssociationClass(ModelClass modelClass, ModelClass associationClass, BidirectionalAssociation association)
@@ -596,7 +836,17 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                                                                 .FirstOrDefault(m => m.DescribedAssociationElementId == association.Id);
 
                         if (associationClass == null)
-                           segments.AddRange(WriteStandardBidirectionalAssociation(association, foreignKeyColumns, required));
+                        {
+                           if (!association.GenerateManyToManyClass
+                            || !association.Source.AllIdentityAttributes.Any()
+                            || !association.Target.AllIdentityAttributes.Any())
+                              segments.AddRange(WriteStandardBidirectionalAssociation(association, foreignKeyColumns, required));
+                           else
+                           {
+                              OutputNoTerminator(segments);
+                              WriteBidirectionalAssociationWithGeneratedClass(modelClass, association);
+                           }
+                        }
                         else
                         {
                            OutputNoTerminator(segments);
@@ -723,12 +973,13 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                   ? association.SourceFKColumnName.Split(',').Select(a => $"\"{a}\"")
                   : association.Source.AllIdentityAttributes.Select(a => $"\"{association.Source.Name}_{a.Name}\""));
                string joinTable = string.IsNullOrEmpty(association.JoinTableName) ? $"{association.Target.Name}_x_{association.Source.Name}" : association.JoinTableName;
+               string buildActions = GetJoinTableBuildActions(modelRoot, association.UseTemporalTables);
 
                string segment =
                   "UsingEntity<Dictionary<string, object>>("
                 + $"right => right.HasOne<{association.Target.FullName}>().WithMany().HasForeignKey({targetFKs}).OnDelete({PresentationHelper.GetDeleteActionSqlString(association.TargetDeleteAction)}),"
                 + $"left => left.HasOne<{association.Source.FullName}>().WithMany().HasForeignKey({sourceFKs}).OnDelete({PresentationHelper.GetDeleteActionSqlString(association.SourceDeleteAction)}),"
-                + $"join => join.ToTable(\"{joinTable}\"))";
+                + $"join => join.ToTable(\"{joinTable}\"{buildActions}))";
 
                segments.Add(segment);
             }

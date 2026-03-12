@@ -5376,6 +5376,183 @@ namespace Sawczyn.EFDesigner.EFModel
 		}
 		
 		#endregion
+		#region GenerateManyToManyClass domain property code
+		
+		/// <summary>
+		/// GenerateManyToManyClass domain property Id.
+		/// </summary>
+		public static readonly global::System.Guid GenerateManyToManyClassDomainPropertyId = new global::System.Guid(0x768c6f70, 0xb581, 0x4ec1, 0x84, 0x5f, 0x52, 0x14, 0x55, 0xb4, 0x5a, 0xf9);
+		
+		/// <summary>
+		/// Storage for GenerateManyToManyClass
+		/// </summary>
+		private global::System.Boolean generateManyToManyClassPropertyStorage;
+		
+		/// <summary>
+		/// Gets or sets the value of GenerateManyToManyClass domain property.
+		/// Generate the relation entity to allow do queries to it.
+		/// </summary>
+		[DslDesign::DisplayNameResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.DisplayName", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::CategoryResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.Category", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::DescriptionResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.Description", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslModeling::DomainObjectId("768c6f70-b581-4ec1-845f-521455b45af9")]
+		public global::System.Boolean GenerateManyToManyClass
+		{
+			[global::System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return generateManyToManyClassPropertyStorage;
+			}
+			[global::System.Diagnostics.DebuggerStepThrough]
+			set
+			{
+				GenerateManyToManyClassPropertyHandler.Instance.SetValue(this, value);
+			}
+		}
+		/// <summary>
+		/// Value handler for the BidirectionalAssociation.GenerateManyToManyClass domain property.
+		/// </summary>
+		internal sealed partial class GenerateManyToManyClassPropertyHandler : DslModeling::DomainPropertyValueHandler<BidirectionalAssociation, global::System.Boolean>
+		{
+			private GenerateManyToManyClassPropertyHandler() { }
+		
+			/// <summary>
+			/// Gets the singleton instance of the BidirectionalAssociation.GenerateManyToManyClass domain property value handler.
+			/// </summary>
+			public static readonly GenerateManyToManyClassPropertyHandler Instance = new GenerateManyToManyClassPropertyHandler();
+		
+			/// <summary>
+			/// Gets the Id of the BidirectionalAssociation.GenerateManyToManyClass domain property.
+			/// </summary>
+			public sealed override global::System.Guid DomainPropertyId
+			{
+				[global::System.Diagnostics.DebuggerStepThrough]
+				get
+				{
+					return GenerateManyToManyClassDomainPropertyId;
+				}
+			}
+			
+			/// <summary>
+			/// Gets a strongly-typed value of the property on specified element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <returns>Property value.</returns>
+			public override sealed global::System.Boolean GetValue(BidirectionalAssociation element)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+				return element.generateManyToManyClassPropertyStorage;
+			}
+		
+			/// <summary>
+			/// Sets property value on an element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <param name="newValue">New property value.</param>
+			public override sealed void SetValue(BidirectionalAssociation element, global::System.Boolean newValue)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+		
+				global::System.Boolean oldValue = GetValue(element);
+				if (newValue != oldValue)
+				{
+					ValueChanging(element, oldValue, newValue);
+					element.generateManyToManyClassPropertyStorage = newValue;
+					ValueChanged(element, oldValue, newValue);
+				}
+			}
+		}
+		
+		#endregion
+		#region UseTemporalTables domain property code
+		
+		/// <summary>
+		/// UseTemporalTables domain property Id.
+		/// </summary>
+		public static readonly global::System.Guid UseTemporalTablesDomainPropertyId = new global::System.Guid(0xf13afee1, 0x1f82, 0x4b5f, 0x8f, 0x4b, 0x35, 0x74, 0xfe, 0xf3, 0xcb, 0x8a);
+		
+		/// <summary>
+		/// Storage for UseTemporalTables
+		/// </summary>
+		private global::System.Boolean useTemporalTablesPropertyStorage;
+		
+		/// <summary>
+		/// Gets or sets the value of UseTemporalTables domain property.
+		/// If true, configure this many-to-many join table as temporal when
+		/// supported by EF Core provider.
+		/// </summary>
+		[DslDesign::DisplayNameResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.DisplayName", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::CategoryResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.Category", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslDesign::DescriptionResource("Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.Description", typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDomainModel), "Sawczyn.EFDesigner.EFModel.GeneratedCode.DomainModelResx")]
+		[DslModeling::DomainObjectId("f13afee1-1f82-4b5f-8f4b-3574fef3cb8a")]
+		public global::System.Boolean UseTemporalTables
+		{
+			[global::System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return useTemporalTablesPropertyStorage;
+			}
+			[global::System.Diagnostics.DebuggerStepThrough]
+			set
+			{
+				UseTemporalTablesPropertyHandler.Instance.SetValue(this, value);
+			}
+		}
+		/// <summary>
+		/// Value handler for the BidirectionalAssociation.UseTemporalTables domain property.
+		/// </summary>
+		internal sealed partial class UseTemporalTablesPropertyHandler : DslModeling::DomainPropertyValueHandler<BidirectionalAssociation, global::System.Boolean>
+		{
+			private UseTemporalTablesPropertyHandler() { }
+		
+			/// <summary>
+			/// Gets the singleton instance of the BidirectionalAssociation.UseTemporalTables domain property value handler.
+			/// </summary>
+			public static readonly UseTemporalTablesPropertyHandler Instance = new UseTemporalTablesPropertyHandler();
+		
+			/// <summary>
+			/// Gets the Id of the BidirectionalAssociation.UseTemporalTables domain property.
+			/// </summary>
+			public sealed override global::System.Guid DomainPropertyId
+			{
+				[global::System.Diagnostics.DebuggerStepThrough]
+				get
+				{
+					return UseTemporalTablesDomainPropertyId;
+				}
+			}
+			
+			/// <summary>
+			/// Gets a strongly-typed value of the property on specified element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <returns>Property value.</returns>
+			public override sealed global::System.Boolean GetValue(BidirectionalAssociation element)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+				return element.useTemporalTablesPropertyStorage;
+			}
+		
+			/// <summary>
+			/// Sets property value on an element.
+			/// </summary>
+			/// <param name="element">Element which owns the property.</param>
+			/// <param name="newValue">New property value.</param>
+			public override sealed void SetValue(BidirectionalAssociation element, global::System.Boolean newValue)
+			{
+				if (element == null) throw new global::System.ArgumentNullException("element");
+		
+				global::System.Boolean oldValue = GetValue(element);
+				if (newValue != oldValue)
+				{
+					ValueChanging(element, oldValue, newValue);
+					element.useTemporalTablesPropertyStorage = newValue;
+					ValueChanged(element, oldValue, newValue);
+				}
+			}
+		}
+		
+		#endregion
 		#region BidirectionalSource link accessor
 		/// <summary>
 		/// Get the list of BidirectionalAssociation links to a ModelClass.

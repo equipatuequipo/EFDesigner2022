@@ -2621,6 +2621,30 @@
     <value>Database</value>
     <comment>Category for DomainProperty &apos;TargetFKColumnName&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
   </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.Description" xml:space="preserve">
+    <value>Generate the relation entity to allow do queries to it.</value>
+    <comment>Description for DomainProperty &apos;GenerateManyToManyClass&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.DisplayName" xml:space="preserve">
+    <value>Generate Many To Many Class</value>
+    <comment>DisplayName for DomainProperty &apos;GenerateManyToManyClass&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/GenerateManyToManyClass.Category" xml:space="preserve">
+    <value>Code Generation</value>
+    <comment>Category for DomainProperty &apos;GenerateManyToManyClass&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.Description" xml:space="preserve">
+    <value>If true, configure this many-to-many join table as temporal when supported by EF Core provider.</value>
+    <comment>Description for DomainProperty &apos;UseTemporalTables&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.DisplayName" xml:space="preserve">
+    <value>Use Temporal Tables</value>
+    <comment>DisplayName for DomainProperty &apos;UseTemporalTables&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
+  <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/UseTemporalTables.Category" xml:space="preserve">
+    <value>Database</value>
+    <comment>Category for DomainProperty &apos;UseTemporalTables&apos; on DomainClass &apos;BidirectionalAssociation&apos;</comment>
+  </data>
   <data name="Sawczyn.EFDesigner.EFModel.BidirectionalAssociation/BidirectionalSource.Description" xml:space="preserve">
     <value></value>
     <comment>Description for DomainRole &apos;BidirectionalSource&apos; on DomainRelationship &apos;BidirectionalAssociation&apos;</comment>

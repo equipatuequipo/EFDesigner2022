@@ -1752,6 +1752,18 @@
             <xsd:documentation>Optional name of column holding foreign key value for this end of the association</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
+        <!-- Property: GenerateManyToManyClass -->
+        <xsd:attribute name="generateManyToManyClass" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>Generate the relation entity to allow do queries to it.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <!-- Property: UseTemporalTables -->
+        <xsd:attribute name="useTemporalTables" type="xsd:boolean" >
+          <xsd:annotation>
+            <xsd:documentation>If true, configure this many-to-many join table as temporal when supported by EF Core provider.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

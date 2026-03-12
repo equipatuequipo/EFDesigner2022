@@ -65,7 +65,12 @@ namespace Sawczyn.EFDesigner.EFModel
                propertyDescriptors.Remove("JoinTableName");
                propertyDescriptors.Remove("SourceFKColumnName");
                propertyDescriptors.Remove("TargetFKColumnName");
+               propertyDescriptors.Remove("GenerateManyToManyClass");
+               propertyDescriptors.Remove("UseTemporalTables");
             }
+
+            if (!modelRoot.IsEFCore6Plus)
+               propertyDescriptors.Remove("UseTemporalTables");
 
             // implementNotify implicitly defines autoproperty as false, so we don't display it
             if (association.TargetImplementNotify)
@@ -111,6 +116,8 @@ namespace Sawczyn.EFDesigner.EFModel
                propertyDescriptors.Remove("JoinTableName");
                propertyDescriptors.Remove("SourceFKColumnName");
                propertyDescriptors.Remove("TargetFKColumnName");
+               propertyDescriptors.Remove("GenerateManyToManyClass");
+               propertyDescriptors.Remove("UseTemporalTables");
                propertyDescriptors.Remove("TargetAutoInclude");
             }
 

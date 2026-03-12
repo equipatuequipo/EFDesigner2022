@@ -1567,6 +1567,16 @@
             <ExternalTypeMoniker Name="/System/String" />
           </Type>
         </DomainProperty>
+        <DomainProperty Id="768c6f70-b581-4ec1-845f-521455b45af9" Description="Generate the relation entity to allow do queries to it." Name="GenerateManyToManyClass" DisplayName="Generate Many To Many Class" DefaultValue="false" Category="Code Generation">
+          <Type>
+            <ExternalTypeMoniker Name="/System/Boolean" />
+          </Type>
+        </DomainProperty>
+        <DomainProperty Id="f13afee1-1f82-4b5f-8f4b-3574fef3cb8a" Description="If true, configure this many-to-many join table as temporal when supported by EF Core provider." Name="UseTemporalTables" DisplayName="Use Temporal Tables" DefaultValue="false" Category="Database">
+          <Type>
+            <ExternalTypeMoniker Name="/System/Boolean" />
+          </Type>
+        </DomainProperty>
       </Properties>
       <Source>
         <DomainRole Id="a775052d-a6a9-4916-8c4a-1bd7724b6e8b" Description="" Name="BidirectionalSource" DisplayName="Bidirectional Source" PropertyName="BidirectionalTargets" PropertyDisplayName="Bidirectional Targets">
@@ -2786,6 +2796,12 @@
           </XmlPropertyData>
           <XmlPropertyData XmlName="targetFKColumnName">
             <DomainPropertyMoniker Name="BidirectionalAssociation/TargetFKColumnName" />
+          </XmlPropertyData>
+          <XmlPropertyData XmlName="generateManyToManyClass">
+            <DomainPropertyMoniker Name="BidirectionalAssociation/GenerateManyToManyClass" />
+          </XmlPropertyData>
+          <XmlPropertyData XmlName="useTemporalTables">
+            <DomainPropertyMoniker Name="BidirectionalAssociation/UseTemporalTables" />
           </XmlPropertyData>
         </ElementData>
       </XmlClassData>

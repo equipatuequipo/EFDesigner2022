@@ -41,6 +41,7 @@
     <NoWarn>CS1762;VSTHRD001;MSB3277</NoWarn>
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\Sawczyn.EFDesigner.EFModel.DslPackage.xml</DocumentationFile>
+    <DeployExtension>true</DeployExtension>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

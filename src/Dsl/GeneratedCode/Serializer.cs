@@ -14963,6 +14963,40 @@ namespace Sawczyn.EFDesigner.EFModel
 	            }
 	         }
 	      }
+	      // GenerateManyToManyClass
+	      if (!serializationContext.Result.Failed)
+	      {
+	         string attribGenerateManyToManyClass = EFModelSerializationHelper.Instance.ReadAttribute(serializationContext, element, reader, "generateManyToManyClass");
+	         if (attribGenerateManyToManyClass != null)
+	         {
+	            global::System.Boolean valueOfGenerateManyToManyClass;
+	            if (DslModeling::SerializationUtilities.TryGetValue<global::System.Boolean>(serializationContext, attribGenerateManyToManyClass, out valueOfGenerateManyToManyClass))
+	            {
+	               instanceOfBidirectionalAssociation.GenerateManyToManyClass = valueOfGenerateManyToManyClass;
+	            }
+	            else
+	            {   // Invalid property value, ignored.
+	               EFModelSerializationBehaviorSerializationMessages.IgnoredPropertyValue(serializationContext, reader, "generateManyToManyClass", typeof(global::System.Boolean), attribGenerateManyToManyClass);
+	            }
+	         }
+	      }
+	      // UseTemporalTables
+	      if (!serializationContext.Result.Failed)
+	      {
+	         string attribUseTemporalTables = EFModelSerializationHelper.Instance.ReadAttribute(serializationContext, element, reader, "useTemporalTables");
+	         if (attribUseTemporalTables != null)
+	         {
+	            global::System.Boolean valueOfUseTemporalTables;
+	            if (DslModeling::SerializationUtilities.TryGetValue<global::System.Boolean>(serializationContext, attribUseTemporalTables, out valueOfUseTemporalTables))
+	            {
+	               instanceOfBidirectionalAssociation.UseTemporalTables = valueOfUseTemporalTables;
+	            }
+	            else
+	            {   // Invalid property value, ignored.
+	               EFModelSerializationBehaviorSerializationMessages.IgnoredPropertyValue(serializationContext, reader, "useTemporalTables", typeof(global::System.Boolean), attribUseTemporalTables);
+	            }
+	         }
+	      }
 	   }
 	
 	   #region TryCreateInstance & TryCreateDerivedInstance
@@ -15593,6 +15627,32 @@ namespace Sawczyn.EFDesigner.EFModel
 	            if (!string.IsNullOrEmpty(propValue))
 	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "targetFKColumnName", propValue);
 	
+	         }
+	      }
+	      // GenerateManyToManyClass
+	      if (!serializationContext.Result.Failed)
+	      {
+	         global::System.Boolean propValue = instanceOfBidirectionalAssociation.GenerateManyToManyClass;
+	         string serializedPropValue = DslModeling::SerializationUtilities.GetString<global::System.Boolean>(serializationContext, propValue);
+	         if (!serializationContext.Result.Failed)
+	         {
+	            if (serializationContext.WriteOptionalPropertiesWithDefaultValue || string.CompareOrdinal(serializedPropValue, "false") != 0)
+	            {   // No need to write the value out if it's the same as default value.
+	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "generateManyToManyClass", serializedPropValue);
+	            }
+	         }
+	      }
+	      // UseTemporalTables
+	      if (!serializationContext.Result.Failed)
+	      {
+	         global::System.Boolean propValue = instanceOfBidirectionalAssociation.UseTemporalTables;
+	         string serializedPropValue = DslModeling::SerializationUtilities.GetString<global::System.Boolean>(serializationContext, propValue);
+	         if (!serializationContext.Result.Failed)
+	         {
+	            if (serializationContext.WriteOptionalPropertiesWithDefaultValue || string.CompareOrdinal(serializedPropValue, "false") != 0)
+	            {   // No need to write the value out if it's the same as default value.
+	               EFModelSerializationHelper.Instance.WriteAttributeString(serializationContext, element, writer, "useTemporalTables", serializedPropValue);
+	            }
 	         }
 	      }
 	   }
