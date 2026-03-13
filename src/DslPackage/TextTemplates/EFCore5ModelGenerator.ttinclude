@@ -11,7 +11,6 @@
 #><#@ assembly name="System.Xml"
 #><#@ assembly name="System.Xml.Linq"
 #><#@ import namespace="System"
-#><#@ import namespace="System.IO"
 #><#@ import namespace="System.Globalization"
 #><#@ import namespace="System.Linq"
 #><#@ import namespace="System.Security"
@@ -31,15 +30,6 @@
       /// </summary>
       public class EFCore5ModelGenerator : EFCore3ModelGenerator
       {
-         private sealed class ManyToManyForeignKey
-         {
-            public string ColumnName { get; set; }
-
-            public string PropertyName { get; set; }
-
-            public string PropertyType { get; set; }
-         }
-
          /// <summary>
          /// Initializes a new instance of the EFCore5ModelGenerator class with the specified host object.
          /// </summary>
@@ -48,31 +38,20 @@
 
          public override void Generate(Manager manager)
          {
+            EnsureGeneratedManyToManyAssociationClasses();
             base.Generate(manager);
+         }
 
-            string fileNameMarker = string.IsNullOrEmpty(modelRoot.FileNameMarker)
-                                       ? string.Empty
-                                       : $".{modelRoot.FileNameMarker}";
-
-            HashSet<string> emittedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (BidirectionalAssociation association in GatherGeneratedManyToManyAssociations())
-            {
-               string generatedClassName = GetGeneratedManyToManyClassName(association);
-
-               if (modelRoot.Classes.Any(c => c.Name == generatedClassName))
-                  continue;
-
-               string outputFilePath = Path.Combine(modelRoot.ContextOutputDirectory, $"{generatedClassName}{fileNameMarker}.cs");
-
-               if (!emittedFiles.Add(outputFilePath))
-                  continue;
-
-               ClearIndent();
-               manager.StartNewFile(outputFilePath);
-               Output("#nullable enable");
-               WriteGeneratedManyToManyClass(association);
-            }
+         private void EnsureGeneratedManyToManyAssociationClasses()
+         {
+            foreach (BidirectionalAssociation association in modelRoot.Store.ElementDirectory.AllElements
+                                                                   .OfType<BidirectionalAssociation>()
+                                                                   .Where(a => a.Persistent
+                                                                            && a.GenerateManyToManyClass
+                                                                            && a.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                                                                            && a.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany)
+                                                                   .ToList())
+               association.EnsureManyToManyAssociationClass();
          }
 
          /// <summary>
@@ -349,118 +328,6 @@
             return segments;
          }
 
-         private IEnumerable<BidirectionalAssociation> GatherGeneratedManyToManyAssociations()
-         {
-            List<ModelClass> associationClasses = modelRoot.Store.ElementDirectory.AllElements
-                                                      .OfType<ModelClass>()
-                                                      .Where(mc => mc.IsAssociationClass)
-                                                      .ToList();
-
-            return modelRoot.Store.ElementDirectory.AllElements
-                            .OfType<BidirectionalAssociation>()
-                            .Where(a => a.Persistent
-                                     && a.GenerateManyToManyClass
-                                     && a.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
-                                     && a.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
-                                     && !associationClasses.Any(mc => mc.DescribedAssociationElementId == a.Id));
-         }
-
-         private static string BuildForeignKeyExpression(IEnumerable<ManyToManyForeignKey> foreignKeys)
-         {
-            List<ManyToManyForeignKey> keys = foreignKeys.ToList();
-
-            return keys.Count == 1
-                      ? $"x => x.{keys[0].PropertyName}"
-                      : $"x => new {{ x.{string.Join(", x.", keys.Select(k => k.PropertyName))} }}";
-         }
-
-         private static string BuildGeneratedForeignKeyPropertyName(ModelClass modelClass, ModelAttribute identityAttribute, string explicitPrefix = null)
-         {
-            string prefix = string.IsNullOrWhiteSpace(explicitPrefix)
-                               ? modelClass.Name
-                               : explicitPrefix;
-
-            return identityAttribute.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
-                      ? identityAttribute.Name
-                      : $"{prefix}{identityAttribute.Name}";
-         }
-
-         private List<ManyToManyForeignKey> BuildGeneratedManyToManyForeignKeys(BidirectionalAssociation association, bool sourceEnd)
-         {
-            ModelClass relatedClass = sourceEnd
-                                         ? association.Source
-                                         : association.Target;
-
-            string configuredColumnNames = sourceEnd
-                                              ? association.SourceFKColumnName
-                                              : association.TargetFKColumnName;
-
-            string[] splitColumnNames = string.IsNullOrWhiteSpace(configuredColumnNames)
-                                           ? Array.Empty<string>()
-                                           : configuredColumnNames.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrWhiteSpace(name)).ToArray();
-
-            string duplicatePrefix = (association.Source.Name == association.Target.Name)
-                                        ? (sourceEnd ? "Source" : "Target")
-                                        : string.Empty;
-
-            List<ManyToManyForeignKey> result = new List<ManyToManyForeignKey>();
-            int index = 0;
-
-            foreach (ModelAttribute identityAttribute in relatedClass.AllIdentityAttributes)
-            {
-               string propertyName = BuildGeneratedForeignKeyPropertyName(relatedClass, identityAttribute, duplicatePrefix);
-               string configuredName = splitColumnNames.Length > index
-                                          ? splitColumnNames[index]
-                                          : string.Empty;
-
-               result.Add(new ManyToManyForeignKey
-               {
-                  ColumnName = string.IsNullOrWhiteSpace(configuredName)
-                                  ? propertyName
-                                  : configuredName,
-                  PropertyName = propertyName,
-                  PropertyType = identityAttribute.FQPrimitiveType
-               });
-
-               ++index;
-            }
-
-            return result;
-         }
-
-         private string GetGeneratedManyToManyClassName(BidirectionalAssociation association)
-         {
-            string baseName = $"{association.Source.Name}_{association.Target.Name}";
-
-            bool hasConflictingAssociations = modelRoot.Store.ElementDirectory.AllElements
-                                                 .OfType<BidirectionalAssociation>()
-                                                 .Where(other => other != association
-                                                              && other.Persistent
-                                                              && other.GenerateManyToManyClass
-                                                              && other.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
-                                                              && other.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany)
-                                                 .Any(other =>
-                                                         (other.Source == association.Source && other.Target == association.Target)
-                                                      || (other.Source == association.Target && other.Target == association.Source));
-
-            if (hasConflictingAssociations || association.Source.Name == association.Target.Name)
-               baseName = $"{baseName}_{association.TargetPropertyName}_{association.SourcePropertyName}";
-
-            return baseName;
-         }
-
-         private static string GetJoinNavigationPropertyName(BidirectionalAssociation association, bool sourceEnd)
-         {
-            if (association.Source.Name != association.Target.Name)
-               return sourceEnd
-                         ? association.Source.Name
-                         : association.Target.Name;
-
-            return sourceEnd
-                      ? "Source"
-                      : "Target";
-         }
-
          private static string GetJoinTableBuildActions(ModelRoot modelRoot, bool useTemporalTables)
          {
             return modelRoot.IsEFCore6Plus && useTemporalTables
@@ -468,85 +335,97 @@
                       : string.Empty;
          }
 
-         private void WriteGeneratedManyToManyClass(BidirectionalAssociation association)
+         private static bool IsGeneratedManyToManyAssociationClassLink(BidirectionalAssociation association)
          {
-            string className = GetGeneratedManyToManyClassName(association);
-            string sourceNavigationProperty = GetJoinNavigationPropertyName(association, true);
-            string targetNavigationProperty = GetJoinNavigationPropertyName(association, false);
+            if (association?.Target == null || !association.Target.IsAssociationClass || association.Target.DescribedAssociationElementId == Guid.Empty)
+               return false;
 
-            List<ManyToManyForeignKey> sourceForeignKeys = BuildGeneratedManyToManyForeignKeys(association, true);
-            List<ManyToManyForeignKey> targetForeignKeys = BuildGeneratedManyToManyForeignKeys(association, false);
+            BidirectionalAssociation describedAssociation = association.Store.ElementDirectory.AllElements
+                                                                             .OfType<BidirectionalAssociation>()
+                                                                             .FirstOrDefault(a => a.Id == association.Target.DescribedAssociationElementId);
 
-            Output("using System;");
-            NL();
-
-            BeginNamespace(modelRoot.Namespace);
-            Output($"public partial class {className}");
-            Output("{");
-
-            foreach (ManyToManyForeignKey foreignKey in targetForeignKeys.Concat(sourceForeignKeys))
-               Output($"public {foreignKey.PropertyType} {foreignKey.PropertyName} {{ get; set; }}");
-
-            NL();
-            Output($"public virtual {association.Source.FullName} {sourceNavigationProperty} {{ get; set; }} = null!;");
-            Output($"public virtual {association.Target.FullName} {targetNavigationProperty} {{ get; set; }} = null!;");
-            Output("}");
-
-            EndNamespace(modelRoot.Namespace);
-            NL();
+            return describedAssociation != null
+                && describedAssociation.Persistent
+                && describedAssociation.GenerateManyToManyClass
+                && describedAssociation.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                && describedAssociation.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany;
          }
 
-         private void WriteBidirectionalAssociationWithGeneratedClass(ModelClass modelClass, BidirectionalAssociation association)
+         private static List<string> GetAssociationClassForeignKeyPropertyNames(ModelClass associationClass, BidirectionalAssociation associationLink)
          {
-            string indent = modelClass.ModelRoot.UseTabs
-                               ? "\t"
-                               : "   ";
+            return associationClass.Attributes
+                                   .Where(a => a.IsForeignKeyFor == associationLink.Id)
+                                   .Select(a => a.Name)
+                                   .ToList();
+         }
 
-            string generatedClassName = GetGeneratedManyToManyClassName(association);
-            string sourceNavigationProperty = GetJoinNavigationPropertyName(association, true);
-            string targetNavigationProperty = GetJoinNavigationPropertyName(association, false);
-            string joinTable = string.IsNullOrEmpty(association.JoinTableName)
-                                  ? $"{association.Target.Name}_x_{association.Source.Name}"
-                                  : association.JoinTableName;
-            string buildActions = GetJoinTableBuildActions(modelClass.ModelRoot, association.UseTemporalTables);
+         private static List<string> GetAssociationClassForeignKeyNames(ModelClass associationClass, BidirectionalAssociation associationLink)
+         {
+            List<string> foreignKeyProperties = GetAssociationClassForeignKeyPropertyNames(associationClass, associationLink);
 
-            List<ManyToManyForeignKey> sourceForeignKeys = BuildGeneratedManyToManyForeignKeys(association, true);
-            List<ManyToManyForeignKey> targetForeignKeys = BuildGeneratedManyToManyForeignKeys(association, false);
-            List<ManyToManyForeignKey> allForeignKeys = targetForeignKeys.Concat(sourceForeignKeys).ToList();
+            if (foreignKeyProperties.Any())
+               return foreignKeyProperties;
 
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (modelClass.ModelRoot.ChopMethodChains)
-               PushIndent("            ");
-            else
-               PushIndent(indent);
+            List<string> conventionForeignKeyNames = GetConventionAssociationClassForeignKeyNames(associationLink);
 
-            Output($".UsingEntity<{generatedClassName}>(");
-            PushIndent(indent);
-            Output("l => l");
-            PushIndent(indent);
-            Output($".HasOne(x => x.{targetNavigationProperty})");
-            Output(".WithMany()");
-            Output($".HasForeignKey({BuildForeignKeyExpression(targetForeignKeys)})");
-            Output($".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.TargetDeleteAction)}),");
-            PopIndent();
-            Output("r => r");
-            PushIndent(indent);
-            Output($".HasOne(x => x.{sourceNavigationProperty})");
-            Output(".WithMany()");
-            Output($".HasForeignKey({BuildForeignKeyExpression(sourceForeignKeys)})");
-            Output($".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.SourceDeleteAction)}),");
-            PopIndent();
-            Output("j =>");
-            Output("{");
-            Output($"j.ToTable(\"{joinTable}\"{buildActions});");
-            Output($"j.HasKey({BuildForeignKeyExpression(allForeignKeys)});");
+            // For generated many-to-many association classes, ignore FKPropertyName because
+            // it may come from pluralized navigation names (e.g. ProductsId).
+            if (IsGeneratedManyToManyAssociationClassLink(associationLink) && conventionForeignKeyNames.Any())
+               return conventionForeignKeyNames;
 
-            foreach (ManyToManyForeignKey foreignKey in allForeignKeys.Where(fk => fk.ColumnName != fk.PropertyName))
-               Output($"j.Property(x => x.{foreignKey.PropertyName}).HasColumnName(\"{foreignKey.ColumnName}\");");
+            if (!string.IsNullOrWhiteSpace(associationLink.FKPropertyName))
+               return associationLink.FKPropertyName
+                                     .Split(',')
+                                     .Select(x => x.Trim())
+                                     .Where(x => !string.IsNullOrWhiteSpace(x))
+                                     .ToList();
 
-            Output("});");
-            PopIndent();
-            PopIndent();
+            return conventionForeignKeyNames;
+         }
+
+         private static List<string> GetConventionAssociationClassForeignKeyNames(BidirectionalAssociation associationLink)
+         {
+            return associationLink.Source.AllIdentityAttributes
+                                 .Select(a =>
+                                         {
+                                            if (a.Name.StartsWith(associationLink.Source.Name, StringComparison.OrdinalIgnoreCase))
+                                               return a.Name;
+
+                                            return a.Name.Equals("Id", StringComparison.OrdinalIgnoreCase)
+                                                      ? $"{associationLink.Source.Name}_Id"
+                                                      : $"{associationLink.Source.Name}_{a.Name}";
+                                         })
+                                 .ToList();
+         }
+
+         private static string BuildForeignKeyLambdaExpression(IEnumerable<string> foreignKeyProperties)
+         {
+            List<string> keys = foreignKeyProperties.ToList();
+
+            return keys.Count == 1
+                      ? $"x => x.{keys[0]}"
+                      : $"x => new {{ x.{string.Join(", x.", keys)} }}";
+         }
+
+         private static string BuildForeignKeyNameListExpression(IEnumerable<string> foreignKeyNames)
+         {
+            return string.Join(", ", foreignKeyNames.Select(n => $"\"{n}\""));
+         }
+
+         private static bool CanUseAssociationClassForManyToMany(ModelClass associationClass, BidirectionalAssociation association)
+         {
+            if (associationClass == null || association == null)
+               return false;
+
+            List<BidirectionalAssociation> joins = associationClass.AllNavigationProperties()
+                                                                   .Select(np => np.AssociationObject)
+                                                                   .OfType<BidirectionalAssociation>()
+                                                                   .ToList();
+
+            BidirectionalAssociation associationToSource = joins.FirstOrDefault(a => a.Source == association.Source);
+            BidirectionalAssociation associationToTarget = joins.FirstOrDefault(a => a.Source == association.Target);
+
+            return associationToSource != null && associationToTarget != null;
          }
 
          private void WriteBidirectionalAssociationWithAssociationClass(ModelClass modelClass, ModelClass associationClass, BidirectionalAssociation association)
@@ -561,6 +440,17 @@
             BidirectionalAssociation associationToTarget =
                (BidirectionalAssociation)associationClass.AllNavigationProperties().First(n => n.AssociationObject.Source == association.Target).AssociationObject;
 
+            List<string> foreignKeyPropertiesToTarget = GetAssociationClassForeignKeyPropertyNames(associationClass, associationToTarget);
+            List<string> foreignKeyPropertiesToSource = GetAssociationClassForeignKeyPropertyNames(associationClass, associationToSource);
+            List<string> foreignKeyNamesToTarget = GetAssociationClassForeignKeyNames(associationClass, associationToTarget);
+            List<string> foreignKeyNamesToSource = GetAssociationClassForeignKeyNames(associationClass, associationToSource);
+            string targetDeleteBehaviorSegment = association.TargetDeleteAction == DeleteAction.Default
+                                                    ? string.Empty
+                                                    : $".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.TargetDeleteAction)})";
+            string sourceDeleteBehaviorSegment = association.SourceDeleteAction == DeleteAction.Default
+                                                    ? string.Empty
+                                                    : $".OnDelete({PresentationHelper.GetDeleteActionSqlString(association.SourceDeleteAction)})";
+
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (modelClass.ModelRoot.ChopMethodChains)
                PushIndent("            ");
@@ -572,14 +462,18 @@
             Output("j => j");
             PushIndent(indent);
             Output($".HasOne(x => x.{associationToTarget.SourcePropertyName})");
-            Output($".WithMany(x => x.{associationToTarget.TargetPropertyName})");
-            Output($".HasForeignKey(x => x.{associationClass.Attributes.First(a => a.IsForeignKeyFor == associationToTarget.Id).Name}),");
+            Output(".WithMany()");
+            Output(foreignKeyPropertiesToTarget.Any()
+                      ? $".HasForeignKey({BuildForeignKeyLambdaExpression(foreignKeyPropertiesToTarget)}){targetDeleteBehaviorSegment},"
+                      : $".HasForeignKey({BuildForeignKeyNameListExpression(foreignKeyNamesToTarget)}){targetDeleteBehaviorSegment},");
             PopIndent();
             Output("j => j");
             PushIndent(indent);
             Output($".HasOne(x => x.{associationToSource.SourcePropertyName})");
-            Output($".WithMany(x => x.{associationToSource.TargetPropertyName})");
-            Output($".HasForeignKey(x => x.{associationClass.Attributes.First(a => a.IsForeignKeyFor == associationToSource.Id).Name}),");
+            Output(".WithMany()");
+            Output(foreignKeyPropertiesToSource.Any()
+                      ? $".HasForeignKey({BuildForeignKeyLambdaExpression(foreignKeyPropertiesToSource)}){sourceDeleteBehaviorSegment},"
+                      : $".HasForeignKey({BuildForeignKeyNameListExpression(foreignKeyNamesToSource)}){sourceDeleteBehaviorSegment},");
             PopIndent();
             Output("j =>");
             Output("{");
@@ -593,9 +487,16 @@
 
             #region table definition
 
-            string tableName = string.IsNullOrEmpty(associationClass.TableName)
-                                  ? associationClass.Name
-                                  : associationClass.TableName;
+            bool useGeneratedManyToManyDefaultTableName = association.GenerateManyToManyClass
+                                                       && string.IsNullOrWhiteSpace(association.JoinTableName)
+                                                       && (string.IsNullOrWhiteSpace(associationClass.TableName)
+                                                        || string.Equals(associationClass.TableName, associationClass.Name, StringComparison.Ordinal));
+
+            string tableName = !string.IsNullOrWhiteSpace(association.JoinTableName)
+                                  ? association.JoinTableName
+                                  : useGeneratedManyToManyDefaultTableName
+                                     ? $"{association.Target.Name}_x_{association.Source.Name}"
+                                     : associationClass.TableName;
 
             string schema = string.IsNullOrEmpty(associationClass.DatabaseSchema) || associationClass.DatabaseSchema == associationClass.ModelRoot.DatabaseSchema
                                ? string.Empty
@@ -603,7 +504,7 @@
 
             List<string> modifiers = new List<string>();
 
-            if (associationClass.UseTemporalTables)
+            if (modelClass.ModelRoot.IsEFCore6Plus && association.UseTemporalTables)
                modifiers.Add(" t.IsTemporal();");
 
             string buildActions = modifiers.Any()
@@ -618,6 +519,13 @@
                Output($"j.HasKey(t => t.{identityAttributes[0].Name});");
             else if (identityAttributes.Count > 1)
                Output($"j.HasKey(t => new {{ t.{string.Join(", t.", identityAttributes.Select(ia => ia.Name))} }});");
+            else
+            {
+               List<string> shadowKeyNames = foreignKeyNamesToTarget.Concat(foreignKeyNamesToSource).Distinct().ToList();
+
+               if (shadowKeyNames.Any())
+                  Output($"j.HasKey({BuildForeignKeyNameListExpression(shadowKeyNames)});");
+            }
 
             #endregion
 
@@ -800,7 +708,8 @@
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
             foreach (BidirectionalAssociation association in Association.GetLinksToTargets(modelClass)
                                                                         .OfType<BidirectionalAssociation>()
-                                                                        .Where(x => x.Persistent && !x.Target.IsDependentType))
+                                                                        .Where(x => x.Persistent && !x.Target.IsDependentType)
+                                                                        .Where(x => !IsGeneratedManyToManyAssociationClassLink(x)))
             {
                if (visited.Contains(association))
                   continue;
@@ -842,18 +751,8 @@
                                                                 .OfType<ModelClass>()
                                                                 .FirstOrDefault(m => m.DescribedAssociationElementId == association.Id);
 
-                        if (associationClass == null)
-                        {
-                           if (!association.GenerateManyToManyClass
-                            || !association.Source.AllIdentityAttributes.Any()
-                            || !association.Target.AllIdentityAttributes.Any())
-                              segments.AddRange(WriteStandardBidirectionalAssociation(association, foreignKeyColumns, required));
-                           else
-                           {
-                              OutputNoTerminator(segments);
-                              WriteBidirectionalAssociationWithGeneratedClass(modelClass, association);
-                           }
-                        }
+                        if (associationClass == null || !CanUseAssociationClassForManyToMany(associationClass, association))
+                           segments.AddRange(WriteStandardBidirectionalAssociation(association, foreignKeyColumns, required));
                         else
                         {
                            OutputNoTerminator(segments);

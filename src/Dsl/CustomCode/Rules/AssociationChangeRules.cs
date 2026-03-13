@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.Modeling;
+using Microsoft.VisualStudio.Modeling.Immutability;
 
 using Sawczyn.EFDesigner.EFModel.Extensions;
 
@@ -78,6 +79,7 @@ namespace Sawczyn.EFDesigner.EFModel
          using (Transaction inner = store.TransactionManager.BeginTransaction("Association ElementPropertyChanged"))
          {
             bool doForeignKeyFixup = false;
+            bool ensureGeneratedManyToManyAssociationClass = false;
 
             switch (e.DomainProperty.Name)
             {
@@ -113,6 +115,14 @@ namespace Sawczyn.EFDesigner.EFModel
                         element.Source.Attributes.Where(a => a.IsForeignKeyFor == element.Id).ToList().ForEach(a => a.IsForeignKeyFor = Guid.Empty);
                         element.Target.Attributes.Where(a => a.IsForeignKeyFor == element.Id).ToList().ForEach(a => a.IsForeignKeyFor = Guid.Empty);
                      }
+
+                     break;
+                  }
+
+               case "GenerateManyToManyClass":
+                  {
+                     if (bidirectionalAssociation?.GenerateManyToManyClass == true)
+                        ensureGeneratedManyToManyAssociationClass = true;
 
                      break;
                   }
@@ -307,11 +317,25 @@ namespace Sawczyn.EFDesigner.EFModel
                   }
             }
 
+            ensureGeneratedManyToManyAssociationClass |= bidirectionalAssociation?.GenerateManyToManyClass == true;
+
             if (doForeignKeyFixup)
                FixupForeignKeys(element);
 
             inner.Commit();
             element.RedrawItem();
+
+            if (!errorMessages.Any() && ensureGeneratedManyToManyAssociationClass && bidirectionalAssociation != null)
+            {
+               try
+               {
+                  EnsureManyToManyAssociationClass(bidirectionalAssociation);
+               }
+               catch (Exception exception)
+               {
+                  WarningDisplay.Show($"Could not auto-create association class for {bidirectionalAssociation.GetDisplayText()}: {exception.Message}");
+               }
+            }
          }
 
          errorMessages = errorMessages.Where(m => m != null).ToList();
@@ -320,6 +344,121 @@ namespace Sawczyn.EFDesigner.EFModel
          {
             current.Rollback();
             ErrorDisplay.Show(store, string.Join("\n", errorMessages));
+         }
+      }
+
+      private static bool CanAutoGenerateAssociationClass(BidirectionalAssociation association)
+      {
+         return association != null
+             && !association.IsDeleted
+             && association.Persistent
+             && association.GenerateManyToManyClass
+             && association.Source?.ModelRoot?.IsEFCore5Plus == true
+             && association.SourceMultiplicity == Multiplicity.ZeroMany
+             && association.TargetMultiplicity == Multiplicity.ZeroMany
+             && association.Source?.AllIdentityAttributes.Any() == true
+             && association.Target?.AllIdentityAttributes.Any() == true;
+      }
+
+      internal static ModelClass FindAssociationClass(BidirectionalAssociation association)
+      {
+         return association.Store.GetAll<ModelClass>()
+                           .FirstOrDefault(modelClass => modelClass.IsAssociationClass && modelClass.DescribedAssociationElementId == association.Id);
+      }
+
+      private static string GetGeneratedAssociationClassName(BidirectionalAssociation association)
+      {
+         string baseName = association.Source == association.Target
+                              ? $"{association.Source.Name}_{association.TargetPropertyName}_{association.SourcePropertyName}"
+                              : $"{association.Source.Name}_{association.Target.Name}";
+
+         string candidate = baseName;
+         int suffix = 1;
+         Store store = association.Store;
+
+         while (store.GetAll<ModelClass>().Any(modelClass => modelClass.Name == candidate)
+             || store.GetAll<ModelEnum>().Any(modelEnum => modelEnum.Name == candidate))
+            candidate = $"{baseName}_{suffix++}";
+
+         return candidate;
+      }
+
+      private static void RemoveGeneratedAssociationClassForeignKeyAttributes(ModelClass associationClass, BidirectionalAssociation describedAssociation)
+      {
+         if (associationClass == null || describedAssociation == null)
+            return;
+
+         List<Guid> associationIds = associationClass.AllNavigationProperties()
+                                                     .Select(np => np.AssociationObject)
+                                                     .OfType<BidirectionalAssociation>()
+                                                     .Where(a => a.Target == associationClass
+                                                              && (a.Source == describedAssociation.Source || a.Source == describedAssociation.Target))
+                                                     .Select(a => a.Id)
+                                                     .Distinct()
+                                                     .ToList();
+
+         List<ModelAttribute> attributesToDelete = associationClass.Attributes
+                                                                   .Where(a => associationIds.Contains(a.IsForeignKeyFor))
+                                                                   .ToList();
+
+         if (!attributesToDelete.Any())
+            return;
+
+         void DeleteAttributes()
+         {
+            foreach (ModelAttribute modelAttribute in attributesToDelete)
+            {
+               modelAttribute.SetLocks(Locks.None);
+               modelAttribute.Delete();
+            }
+         }
+
+         TransactionManager transactionManager = associationClass.Store.TransactionManager;
+
+         if (transactionManager.InTransaction)
+            DeleteAttributes();
+         else
+         {
+            using (Transaction transaction = transactionManager.BeginTransaction("Remove generated many-to-many FK attributes"))
+            {
+               DeleteAttributes();
+               transaction.Commit();
+            }
+         }
+      }
+
+      internal static ModelClass EnsureManyToManyAssociationClass(BidirectionalAssociation association)
+      {
+         if (!CanAutoGenerateAssociationClass(association))
+            return FindAssociationClass(association);
+
+         ModelClass existingAssociationClass = FindAssociationClass(association);
+
+         if (existingAssociationClass != null)
+         {
+            RemoveGeneratedAssociationClassForeignKeyAttributes(existingAssociationClass, association);
+            return existingAssociationClass;
+         }
+
+         using (Transaction tx = association.Store.TransactionManager.BeginTransaction("Auto-create many-to-many association class"))
+         {
+            ModelRoot modelRoot = association.Store.ModelRoot();
+            string desiredJoinTableName = association.JoinTableName;
+            ModelClass associationClass = new ModelClass(association.Store, new PropertyAssignment(ModelClass.NameDomainPropertyId, GetGeneratedAssociationClassName(association)));
+            modelRoot.Classes.Add(associationClass);
+            associationClass.ConvertToAssociationClass(association);
+            RemoveGeneratedAssociationClassForeignKeyAttributes(associationClass, association);
+
+            if (!string.IsNullOrWhiteSpace(desiredJoinTableName))
+            {
+               associationClass.TableName = desiredJoinTableName;
+               association.JoinTableName = desiredJoinTableName;
+            }
+
+            associationClass.UseTemporalTables = association.UseTemporalTables;
+            tx.Commit();
+
+            return associationClass;
          }
       }
 

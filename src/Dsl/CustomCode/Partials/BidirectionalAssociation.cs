@@ -41,6 +41,14 @@ namespace Sawczyn.EFDesigner.EFModel
          return $"{Source.Name}.{TargetPropertyName}{targetAutoIncluded} <--> {Target.Name}.{SourcePropertyName}{sourceAutoIncluded}";
       }
 
+      /// <summary>
+      ///    Ensures the generated association class exists for many-to-many relationships configured with GenerateManyToManyClass.
+      /// </summary>
+      public ModelClass EnsureManyToManyAssociationClass()
+      {
+         return AssociationChangedRules.EnsureManyToManyAssociationClass(this);
+      }
+
       private string GetSourceBackingFieldNameValue()
       {
          return string.IsNullOrEmpty(_sourceBackingFieldName)

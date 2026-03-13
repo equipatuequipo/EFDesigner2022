@@ -120,7 +120,23 @@ namespace Sawczyn.EFDesigner.EFModel
          if (allowUserInterface)
             ValidationController?.ClearMessages();
 
+         EnsureGeneratedManyToManyAssociationClasses();
+
          return base.CanSave(allowUserInterface);
+      }
+
+      private void EnsureGeneratedManyToManyAssociationClasses()
+      {
+         if (!(RootElement is ModelRoot modelRoot) || !modelRoot.IsEFCore5Plus)
+            return;
+
+         foreach (BidirectionalAssociation association in modelRoot.Store.GetAll<BidirectionalAssociation>()
+                                                                         .Where(a => a.Persistent
+                                                                                  && a.GenerateManyToManyClass
+                                                                                  && a.SourceMultiplicity == Multiplicity.ZeroMany
+                                                                                  && a.TargetMultiplicity == Multiplicity.ZeroMany)
+                                                                         .ToList())
+            association.EnsureManyToManyAssociationClass();
       }
 
       protected override void CleanupOldDiagramFiles()

@@ -319,6 +319,30 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             return shadowPropertyName;
          }
 
+         protected static bool ShouldSuppressGeneratedManyToManyAssociationClassNavigation(NavigationProperty navigationProperty)
+         {
+            if (!(navigationProperty.AssociationObject is BidirectionalAssociation linkAssociation))
+               return false;
+
+            if (!navigationProperty.PointsToTarget || !(navigationProperty.ClassType?.IsAssociationClass ?? false))
+               return false;
+
+            ModelClass associationClass = navigationProperty.ClassType;
+
+            if (linkAssociation.Target != associationClass || associationClass.DescribedAssociationElementId == Guid.Empty)
+               return false;
+
+            BidirectionalAssociation describedAssociation = linkAssociation.Store.ElementDirectory.AllElements
+                                                                 .OfType<BidirectionalAssociation>()
+                                                                 .FirstOrDefault(a => a.Id == associationClass.DescribedAssociationElementId);
+
+            return describedAssociation != null
+                && describedAssociation.Persistent
+                && describedAssociation.GenerateManyToManyClass
+                && describedAssociation.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                && describedAssociation.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany;
+         }
+
          /// <summary>
          /// Closes the current namespace scope.
          /// </summary>
@@ -585,6 +609,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                requiredParameters.AddRange(modelClass.AllRequiredNavigationProperties()
                                                      .Where(np => (np.AssociationObject.SourceMultiplicity != Sawczyn.EFDesigner.EFModel.Multiplicity.One)
                                                                || (np.AssociationObject.TargetMultiplicity != Sawczyn.EFDesigner.EFModel.Multiplicity.One))
+                                                     .Where(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np))
                                                      .Select(x =>
                                                              {
                                                                 string name = x.ClassType.ModelRoot.ReservedWords.Contains(x.PropertyName.ToLower())
@@ -802,6 +827,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             List<NavigationProperty> requiredNavigationProperties = modelClass.AllRequiredNavigationProperties()
                                                                               .Where(np => (np.AssociationObject.SourceMultiplicity != Sawczyn.EFDesigner.EFModel.Multiplicity.One)
                                                                                         || (np.AssociationObject.TargetMultiplicity != Sawczyn.EFDesigner.EFModel.Multiplicity.One))
+                                                                              .Where(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np))
                                                                               .ToList();
 
             bool hasRequiredNavigationProperties = requiredNavigationProperties.Any();
@@ -1159,7 +1185,8 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             foreach (NavigationProperty navigationProperty in modelClass.LocalNavigationProperties()
                                                                         .Where(x => x.AssociationObject.Persistent
                                                                                  && x.IsCollection
-                                                                                 && !x.ConstructorParameterOnly))
+                                                                                 && !x.ConstructorParameterOnly)
+                                                                        .Where(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np)))
             {
                string collectionType = GetFullContainerName(navigationProperty.AssociationObject.CollectionClass, navigationProperty.ClassType.FullName);
 
@@ -1175,7 +1202,8 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                                                                                  && !x.IsCollection
                                                                                  && !x.ConstructorParameterOnly
                                                                                  && x.Required
-                                                                                 && x.OtherSide.ClassType.IsDependentType))
+                                                                                 && x.OtherSide.ClassType.IsDependentType)
+                                                                        .Where(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np)))
             {
                Output(navigationProperty.IsAutoProperty || string.IsNullOrEmpty(navigationProperty.BackingFieldName)
                          ? $"{navigationProperty.PropertyName} = new {navigationProperty.OtherSide.ClassType.Namespace}.{navigationProperty.OtherSide.ClassType.Name}();"
@@ -1194,7 +1222,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
          [SuppressMessage("ReSharper", "ConvertIfStatementToConditionalTernaryExpression")]
          protected void WriteNavigationProperties(ModelClass modelClass)
          {
-            if (!modelClass.LocalNavigationProperties().Any())
+            if (!modelClass.LocalNavigationProperties().Any(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np)))
                return;
 
             Output("/*************************************************************************");
@@ -1204,6 +1232,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
 
             foreach (NavigationProperty navigationProperty in modelClass.LocalNavigationProperties()
                                                                         .Where(x => !x.ConstructorParameterOnly)
+                                                                        .Where(np => !ShouldSuppressGeneratedManyToManyAssociationClassNavigation(np))
                                                                         .OrderBy(x => x.PropertyName))
             {
                // Two properties are required because each indicator is placed in a different position
