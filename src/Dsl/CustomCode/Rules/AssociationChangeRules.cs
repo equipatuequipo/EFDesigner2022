@@ -366,21 +366,25 @@ namespace Sawczyn.EFDesigner.EFModel
                            .FirstOrDefault(modelClass => modelClass.IsAssociationClass && modelClass.DescribedAssociationElementId == association.Id);
       }
 
-      private static string GetGeneratedAssociationClassName(BidirectionalAssociation association)
+      private static string GetUniqueModelClassName(Store store, string baseName, ModelClass ignore = null)
       {
-         string baseName = association.Source == association.Target
-                              ? $"{association.Source.Name}_{association.TargetPropertyName}_{association.SourcePropertyName}"
-                              : $"{association.Source.Name}_{association.Target.Name}";
-
          string candidate = baseName;
          int suffix = 1;
-         Store store = association.Store;
 
-         while (store.GetAll<ModelClass>().Any(modelClass => modelClass.Name == candidate)
+         while (store.GetAll<ModelClass>().Any(modelClass => modelClass != ignore && modelClass.Name == candidate)
              || store.GetAll<ModelEnum>().Any(modelEnum => modelEnum.Name == candidate))
             candidate = $"{baseName}_{suffix++}";
 
          return candidate;
+      }
+
+      private static string GetGeneratedAssociationClassName(BidirectionalAssociation association)
+      {
+         string baseName = association.Source == association.Target
+                              ? $"{association.Source.Name}_{association.TargetPropertyName}_{association.SourcePropertyName}"
+                              : $"{association.Target.Name}_{association.Source.Name}";
+
+         return GetUniqueModelClassName(association.Store, baseName);
       }
 
       private static void RemoveGeneratedAssociationClassForeignKeyAttributes(ModelClass associationClass, BidirectionalAssociation describedAssociation)
@@ -436,6 +440,52 @@ namespace Sawczyn.EFDesigner.EFModel
 
          if (existingAssociationClass != null)
          {
+            string oldGeneratedName = association.Source == association.Target
+                                         ? $"{association.Source.Name}_{association.TargetPropertyName}_{association.SourcePropertyName}"
+                                         : $"{association.Source.Name}_{association.Target.Name}";
+            string newGeneratedName = association.Source == association.Target
+                                         ? oldGeneratedName
+                                         : $"{association.Target.Name}_{association.Source.Name}";
+            string oldGeneratedTableName = $"{association.Source.Name}_x_{association.Target.Name}";
+            string newGeneratedTableName = $"{association.Target.Name}_x_{association.Source.Name}";
+            string previousName = existingAssociationClass.Name;
+
+            bool shouldRenameGeneratedClass =
+               !string.Equals(oldGeneratedName, newGeneratedName, StringComparison.Ordinal)
+            && string.Equals(existingAssociationClass.Name, oldGeneratedName, StringComparison.Ordinal);
+
+            bool shouldUpdateGeneratedTableName =
+               string.IsNullOrWhiteSpace(association.JoinTableName)
+            && (string.IsNullOrWhiteSpace(existingAssociationClass.TableName)
+             || string.Equals(existingAssociationClass.TableName, previousName, StringComparison.Ordinal)
+             || string.Equals(existingAssociationClass.TableName, oldGeneratedName, StringComparison.Ordinal)
+             || string.Equals(existingAssociationClass.TableName, oldGeneratedTableName, StringComparison.Ordinal));
+
+            if (shouldRenameGeneratedClass || shouldUpdateGeneratedTableName)
+            {
+               void UpdateGeneratedNames()
+               {
+                  if (shouldRenameGeneratedClass)
+                     existingAssociationClass.Name = GetUniqueModelClassName(association.Store, newGeneratedName, existingAssociationClass);
+
+                  if (shouldUpdateGeneratedTableName)
+                     existingAssociationClass.TableName = newGeneratedTableName;
+               }
+
+               TransactionManager transactionManager = association.Store.TransactionManager;
+
+               if (transactionManager.InTransaction)
+                  UpdateGeneratedNames();
+               else
+               {
+                  using (Transaction transaction = transactionManager.BeginTransaction("Update generated many-to-many names"))
+                  {
+                     UpdateGeneratedNames();
+                     transaction.Commit();
+                  }
+               }
+            }
+
             RemoveGeneratedAssociationClassForeignKeyAttributes(existingAssociationClass, association);
             return existingAssociationClass;
          }

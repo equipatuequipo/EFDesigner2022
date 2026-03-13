@@ -14,7 +14,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
    {
       #region Template
 
-      // EFDesigner v4.4.1.2
+      // EFDesigner v4.4.1.3
       // Copyright (c) 2017-2023 Michael Sawczyn
       // https://github.com/msawczyn/EFDesigner
 
@@ -483,7 +483,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             bool useGeneratedManyToManyDefaultTableName = association.GenerateManyToManyClass
                                                        && string.IsNullOrWhiteSpace(association.JoinTableName)
                                                        && (string.IsNullOrWhiteSpace(associationClass.TableName)
-                                                        || string.Equals(associationClass.TableName, associationClass.Name, StringComparison.Ordinal));
+                                                        || string.Equals(associationClass.TableName, associationClass.Name, StringComparison.Ordinal)
+                                                        || string.Equals(associationClass.TableName, $"{association.Source.Name}_{association.Target.Name}", StringComparison.Ordinal)
+                                                        || string.Equals(associationClass.TableName, $"{association.Source.Name}_x_{association.Target.Name}", StringComparison.Ordinal));
 
             string tableName = !string.IsNullOrWhiteSpace(association.JoinTableName)
                                   ? association.JoinTableName
