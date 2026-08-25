@@ -202,7 +202,6 @@ namespace Sawczyn.EFDesigner.EFModel
 	/// </summary>
    [VSShell::ProvideMenuResource("1000.ctmenu", version: 46)]
 	[VSShell::ProvideToolboxItems(1)]
-	[global::Microsoft.VisualStudio.TextTemplating.VSHost.ProvideDirectiveProcessor(typeof(global::Sawczyn.EFDesigner.EFModel.EFModelDirectiveProcessor), global::Sawczyn.EFDesigner.EFModel.EFModelDirectiveProcessor.EFModelDirectiveProcessorName, "A directive processor that provides access to EFModel files")]
 	[global::System.Runtime.InteropServices.Guid(Constants.EFModelPackageId)]
 	internal sealed partial class EFModelPackage : EFModelPackageBase
 	{

@@ -1,5 +1,9 @@
 [$RootKey$\TextTemplating\IncludeFolders]
 [$RootKey$\TextTemplating\IncludeFolders\.tt]
 "IncludeEFDsl"="$PackageFolder$\TextTemplates"
+[$RootKey$\TextTemplating\DirectiveProcessors\EFModelDirectiveProcessor]
+@="A directive processor that provides access to EFModel files"
+"Class"="Sawczyn.EFDesigner.EFModel.EFModelDirectiveProcessor"
+"CodeBase"="$PackageFolder$\Sawczyn.EFDesigner.EFModel.Dsl.dll"
 [$RootKey$\ShellFileAssociations\.efmodel]
 "DefaultIconMoniker"="KnownMonikers.UMLModel"
