@@ -402,7 +402,9 @@ namespace Sawczyn.EFDesigner.EFModel
                                                      .ToList();
 
          List<ModelAttribute> attributesToDelete = associationClass.Attributes
-                                                                   .Where(a => associationIds.Contains(a.IsForeignKeyFor))
+                                                                   .Where(a => associationIds.Contains(a.IsForeignKeyFor)
+                                                                            || (a.IsForeignKeyFor == Guid.Empty
+                                                                             && a.Name.Equals("Id", StringComparison.OrdinalIgnoreCase)))
                                                                    .ToList();
 
          if (!attributesToDelete.Any())

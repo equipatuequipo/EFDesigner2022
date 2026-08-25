@@ -343,6 +343,22 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                 && describedAssociation.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany;
          }
 
+         protected static bool IsGeneratedManyToManyAssociationClass(ModelClass modelClass)
+         {
+            if (modelClass == null || !modelClass.IsAssociationClass || modelClass.DescribedAssociationElementId == Guid.Empty)
+               return false;
+
+            BidirectionalAssociation describedAssociation = modelClass.Store.ElementDirectory.AllElements
+                                                                   .OfType<BidirectionalAssociation>()
+                                                                   .FirstOrDefault(a => a.Id == modelClass.DescribedAssociationElementId);
+
+            return describedAssociation != null
+                && describedAssociation.Persistent
+                && describedAssociation.GenerateManyToManyClass
+                && describedAssociation.SourceMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany
+                && describedAssociation.TargetMultiplicity == Sawczyn.EFDesigner.EFModel.Multiplicity.ZeroMany;
+         }
+
          /// <summary>
          /// Closes the current namespace scope.
          /// </summary>
@@ -1319,7 +1335,9 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                      Output("[NotMapped]");
                }
 
-               if (!navigationProperty.IsCollection && (navigationProperty.AssociationObject.Principal?.IsAbstract ?? false))
+               if (!navigationProperty.IsCollection
+                && (navigationProperty.AssociationObject.Principal?.IsAbstract ?? false)
+                && !IsGeneratedManyToManyAssociationClass(modelClass))
                {
                   Output("[AllowNull]");
                }

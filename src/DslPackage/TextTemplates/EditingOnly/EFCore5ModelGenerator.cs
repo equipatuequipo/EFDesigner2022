@@ -509,15 +509,16 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             Output($"j.ToTable(\"{tableName}\"{schema}{buildActions});");
 
             List<ModelAttribute> identityAttributes = associationClass.IdentityAttributes.ToList();
+            List<string> shadowKeyNames = foreignKeyNamesToTarget.Concat(foreignKeyNamesToSource).Distinct().ToList();
 
-            if (identityAttributes.Count == 1)
+            if (association.GenerateManyToManyClass && shadowKeyNames.Any())
+               Output($"j.HasKey({BuildForeignKeyNameListExpression(shadowKeyNames)});");
+            else if (identityAttributes.Count == 1)
                Output($"j.HasKey(t => t.{identityAttributes[0].Name});");
             else if (identityAttributes.Count > 1)
                Output($"j.HasKey(t => new {{ t.{string.Join(", t.", identityAttributes.Select(ia => ia.Name))} }});");
             else
             {
-               List<string> shadowKeyNames = foreignKeyNamesToTarget.Concat(foreignKeyNamesToSource).Distinct().ToList();
-
                if (shadowKeyNames.Any())
                   Output($"j.HasKey({BuildForeignKeyNameListExpression(shadowKeyNames)});");
             }
