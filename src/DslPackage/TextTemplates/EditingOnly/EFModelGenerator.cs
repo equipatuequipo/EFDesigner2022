@@ -13,7 +13,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
    {
       #region Template
 
-      // EFDesigner v4.4.1.3
+      // EFDesigner v4.4.1.4
       // Copyright (c) 2017-2023 Michael Sawczyn
       // https://github.com/msawczyn/EFDesigner
 
@@ -1253,7 +1253,10 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
             {
                // Two properties are required because each indicator is placed in a different position
                string nullableIndicator = navigationProperty.Required ? string.Empty : "?";
-               string requiredIndicator = navigationProperty.Required && !(navigationProperty.AssociationObject.Principal?.IsAbstract ?? false)
+               bool allowNull = !navigationProperty.IsCollection
+                             && (navigationProperty.AssociationObject.Principal?.IsAbstract ?? false)
+                             && !IsGeneratedManyToManyAssociationClass(modelClass);
+               string requiredIndicator = navigationProperty.Required && !allowNull
                                              ? "required "
                                              : string.Empty;
 
@@ -1335,9 +1338,7 @@ namespace Sawczyn.EFDesigner.EFModel.EditingOnly
                      Output("[NotMapped]");
                }
 
-               if (!navigationProperty.IsCollection
-                && (navigationProperty.AssociationObject.Principal?.IsAbstract ?? false)
-                && !IsGeneratedManyToManyAssociationClass(modelClass))
+               if (allowNull)
                {
                   Output("[AllowNull]");
                }
